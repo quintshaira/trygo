@@ -1,0 +1,179 @@
+<div class="content-wrapper">
+    <div class="content-sidebar transparent">
+        <table class="table-simple">
+            <tr class="condense">
+                <td>Cebu Easy Rent-A-Car</td>
+                <td class="pull-left"><?php echo $this->rental_detail['rental_status'] ? 'Active' : 'Inactive'; ?></td>
+            </tr>
+            <tr class="condense">
+                <td>Rented</td>
+                <td class="pull-left"><?php echo $this->rental_detail['times_rented'] ? $this->rental_detail['times_rented'] : 0;?> times</td>
+            </tr>
+            <div class="group"> <button type="button" onclick="cancel('/Vehicles/list');" class="btn-grey">Go back to list</button></div>
+        </table>
+    </div>
+    <h2 class="heading"><?php echo $this->rental_detail['assigned_vehicle_name'] ? $this->rental_detail['assigned_vehicle_name'] : '';?></h2>
+    <h3 class="sub-title sm-font bold"><?php echo $this->rental_detail['vehicle_type_name'] ? $this->rental_detail['vehicle_type_name'] : '';?></h3>
+    <div class="content-main full">
+        <table class="table-simple athird bordered">
+            <tbody>
+            <tr class="border-bottom">
+                <td class="bold">Max Passenger:</td>
+                <td class="align-left"><?php echo $array_max_passenger[$this->rental_detail['max_passenger']];?><td>
+            </tr>
+            <tr class="border-bottom">
+                <td class="bold">Transmission:</td>
+                <td class="align-left"><?php echo $this->rental_detail['transmission_name'] ? $this->rental_detail['transmission_name'] : '';?></td>
+
+            </tr>
+            <tr class="border-bottom">
+                <td class="bold">Make:</td>
+                <td class="align-left"><?php echo $this->rental_detail['make'] ? $this->rental_detail['make'] : '';?></td>
+
+            </tr>
+            <tr class="border-bottom">
+                <td class="bold">Model:</td>
+                <td class="align-left"><?php echo $this->rental_detail['model'] ? $this->rental_detail['model'] : '';?></td>
+
+            </tr>
+            <tr class="border-bottom">
+                <td class="bold">Year:</td>
+                <td class="align-left"><?php echo $this->rental_detail['year'] ? $this->rental_detail['year'] : '';?></td>
+            </tr>
+            <tr class="border-bottom">
+                <td class="bold">Color:</td>
+                <td class="align-left"><?php echo $this->rental_detail['color'] ? $this->rental_detail['color'] : '';?></td>
+
+            </tr>
+
+            </tbody>
+        </table>
+        <table class="table-simple athird bordered">
+            <tr class="border-bottom">
+                <?php
+                if(count($this->rental_images) > 0)
+                {
+                $sl=1;
+                foreach($this->rental_images as $k=>$v)
+                {
+                    if(count($this->rental_images)==1)
+                    {
+                        $width = '25%';
+                    }elseif(count($this->rental_images)==2)
+                    {
+                        $width = '50%';
+                    }elseif(count($this->rental_images)==3)
+                    {
+                        $width = '75%';
+                    }else{
+                        $width = '100%';
+                    }
+                ?>
+                <td><img src="/public/uploads/rental/<?php echo $v['image_name'];?>" width="<?php echo $width;?>"></td>
+
+                <?php
+                }
+                }
+                ?>
+
+
+            </tr>
+        </table>
+        <?php if($this->rentalSchedulesRows > 0) { ?>
+            <div class="content-main full transparent content-head" >
+
+                <h3 class="title pull-left"><a href="/Rental/details/idd/<?php echo $this->idd;?>/view/list">List View</a></h3>
+                <h3 class="title pull-right"><a href="/Rental/details/idd/<?php echo $this->idd;?>/view/calendar">Calendar View</a></h3>
+            </div>
+
+        <?php }
+        if($this->viewType=='list')
+        {
+        ?>
+        <div class="content-main full">
+            <?php
+            if($this->rentalSchedulesRows > 0)
+            {
+            ?>
+            <div class="team-title">
+                <p class="block"><a href=""> </a></p>
+                <form class="search" id="search_form" action="" method="post">
+                    <input type="hidden" id="hide_del1" name="hide_del1" >
+                    <input type="hidden" value="<?php print $this->num_row; ?>" id="num_row" name="num_row">
+                    <input type="hidden" value="<?php print $this->page; ?>" id="page" name="page">
+                    <input type="hidden" value="<?php print $order_col=$this->order_col; ?>" id="order_col" name="order_col">
+                    <input type="hidden" value="<?php print $order_typ=$this->order_typ; ?>" id="order_typ" name="order_typ">
+                    <input type="hidden" id="del_con_global" name="del_con_global" value=""/>
+                    <input type="text" placeholder="Search" name="quick_search" onKeyPress="do_quick_search(event, this.value);"
+                           value="<?php print $this->quick_search; ?>">
+                </form>
+            </div>
+            <table class="table-full" data-tablesaw-mode="stack">
+                <thead class="sortable">
+                <tr>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('#');?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Schedule From');?> <?php print $this->page_sorting_images['rent_from']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Schedule To');?> <?php print $this->page_sorting_images['rent_to']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Task');?> <?php print $this->page_sorting_images['request_status_id']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?> <?php print $this->page_sorting_images['assigned_driver_1_id']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Location');?> <?php print $this->page_sorting_images['delivery_address']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Status');?> <?php print $this->page_sorting_images['request_status_id']; ?></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <?php
+                $sl = 1;
+                foreach($this->rentalSchedules as $k=>$v)
+                {
+                    $idd=$v['request_id'];
+                ?>
+                    <tr>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['request_id'],$idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values(date('Y-M-d g:i A', strtotime($v['rent_from'])),$idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values(date('Y-M-d g:i A', strtotime($v['rent_to'])),$idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_task_name'],$idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_driver_1_name'],$idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['delivery_address'],$idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['request_status_name'],$idd); ?></td>
+
+                    </tr>
+                <?php
+                    $sl++;
+                }
+                ?>
+                <input type="hidden" id="del_con_tcount" value="<?php echo $sl; ?>"/>
+                </tbody>
+
+            </table>
+                <?php print $this->page_peginetion; ?>
+            <?php
+            }else{
+            ?>
+
+            <div class="alert alert-warning">
+                No Request Found !
+            </div>
+            <?php } ?>
+
+
+        </div>
+
+        <?php
+        }
+        else
+        {
+        include 'calendar.phtml';
+        }
+
+        ?>
+
+    </div>
+
+
+
+
+
+
+
+</div>

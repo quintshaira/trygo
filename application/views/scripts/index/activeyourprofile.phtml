@@ -1,0 +1,211 @@
+<!-- Main Area -->
+<?php
+$user_detail=$this->user_detail;
+?>
+
+<script type="application/javascript">
+
+    function active_profile()
+    {
+        //alert('aa');
+		var ch_pass=$("#ch_pass").val().trim();
+		var ch_re_pass=$("#ch_re_pass").val().trim();
+
+        var ch_neic=$("#ch_neic").val().trim();
+        var ch_job_position=$("#ch_job_position").val()*1;
+		var ch_fname=$("#ch_fname").val().trim();
+        var ch_lname=$("#ch_lname").val().trim();
+		var ch_phone=$("#ch_phone").val().trim();
+
+        var chk=1;
+        var error_str="";
+        
+		if(!ch_pass)
+        {
+            error_str="Please give a new password";
+            chk=0;
+        }
+		if(ch_pass!=ch_re_pass)
+        {
+			error_str+=(error_str!="")?"<br>":"";
+            error_str+="Retype Password dosen't matched";
+            chk=0;
+        }
+		if(!ValidateFname(ch_fname))
+        {
+			error_str+=(error_str!="")?"<br>":"";
+            error_str+="Give minimum 2 character in First name;";
+            chk=0;
+        }
+        if(!ValidateLname(ch_lname))
+        {
+            error_str+=(error_str!="")?"<br>":"";
+            error_str+="Give minimum 2 character in Last name;";
+            chk=0;
+        }
+        if(ch_phone && !Validatephone(ch_phone))
+        {
+            error_str+=(error_str!="")?"<br>":"";
+            error_str+="you can use only number blank space and +-() in contact number";
+            chk=0;
+        }
+        if(ch_neic && !Validatenric(ch_neic))
+        {
+            error_str+=(error_str!="")?"<br>":"";
+            error_str+="Give minimum 5 character in NRIC;";
+            chk=0;
+        }
+        if(!ch_job_position)
+        {
+            error_str+=(error_str!="")?"<br>":"";
+            error_str+="Please select a job position";
+            chk=0;
+        }
+        if(error_str!="")
+        {
+            $("#activation_error").html(error_str);
+            $("#demo-updateprofile-success").attr('class', 'alert fail')
+            $('#demo-updateprofile-success').slideDown();
+			return false;
+        }
+        else
+        {
+            
+			$('#demo-updateprofile-success').slideUp();
+			
+			$("#sub_ch_pass").val(ch_pass);
+			$("#sub_ch_fname").val(ch_fname);
+			$("#sub_ch_lname").val(ch_lname);
+			$("#sub_ch_phone").val(ch_phone);
+			$("#sub_ch_neic").val($("#ch_neic").val());
+			$("#sub_ch_job_position").val($("#ch_job_position").val());
+			$("#sub_ch_add").val($("#ch_add").val());
+			
+			//alert('all ok');
+			return true;
+        }
+    }
+</script>
+
+<div class="main">
+    <!-- Content Area -->
+    <div class="content">
+
+        <div style="color: #FFFFFF; display: inline-block; width: auto;padding-left:20px;" id="msg_center"><?php if($this->server_msg){ print $this->server_msg; } ?></div>
+        <div style="color: #FFFFFF; display: inline-block; width: auto; float: right; padding-right:20px;" id="clockDisplay">aaaaa</div>
+
+        <div class="board">
+            <div class="col detailform">
+                <div class="wrapper">
+                    <div class="title-main"><h2>Please Complete Your Registration</h2></div>
+
+                    <div class="multi-block">
+                        <div class="block2">
+                            <div class="row">
+                                <h3>Create Your Login Password</h3><span id="pass_meater" class="password-verdict">Password Strangth: <span class="weak">Weak</span></span>
+                                <form class="form-row">
+                                    <div class="input-group password"><span class="label fa fa-key"></span><input class="input-box" type="password" autocomplete="off" placeholder="Enter New Password" id="ch_pass"  onkeyup="checkPassStrength(this.value);" ></div>
+                                    <div class="input-group password"><span class="label fa fa-key"></span><input class="input-box" type="password" autocomplete="off" placeholder="Retype New Password" id="ch_re_pass" ></div>
+                                       
+                                </form>
+                            </div>
+                            <div class="row">
+                                <h3>Personal Detail</h3>
+                                <form class="form-row">
+                                    <div class="input-group name"><span class="label fa fa-male"></span><input class="input-box" type="text" placeholder="First Name" value="<?php print $_SESSION['bsc_session']['user_fname']; ?>" id="ch_fname" ></div>
+                                    <div class="input-group name"><span class="label fa fa-male"></span><input class="input-box" type="text" placeholder="Last Name" value="<?php print $_SESSION['bsc_session']['user_lname']; ?>" id="ch_lname" ></div>
+                                    <div class="input-group email"><span class="label fa fa-send"></span><input class="input-box" type="email" placeholder="Email" value="<?php print $_SESSION['bsc_session']['email']; ?>" disabled></div>
+                                    <div class="input-group name"><span class="label fa fa-user"></span>
+                                        <input class="input-box" type="text" placeholder="NRIC/PASSPORT N." value="<?php print $user_detail['nric']; ?>" id="ch_neic" ></div>
+                                    <div class="input-group name"><span class="label fa fa-phone"></span><input class="input-box" type="text" placeholder="Contact Number" value="<?php print $user_detail['phone']; ?>" id="ch_phone" ></div>
+                                    <div class="input-group position"><span class="label fa fa-suitcase"></span>
+                                        <select id="ch_job_position" >
+                                            <?php foreach($this->arr_job_position as $k=>$v) { ?>
+                                            <option value="<?php print $k; ?>" <?php if($user_detail['job_position_id']==$k) { print 'selected'; } ?> ><?php print $v; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="input-group name"><span class="label fa fa-home"></span>
+                                        <input class="input-box" type="text" placeholder="Address" value="<?php print $user_detail['address']; ?>" id="ch_add" ></div>
+                                        <div class="alert fail" id="demo-updateprofile-success">
+                                            <p id="activation_error">Error. Please check.</p>
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="block2">
+                            <div class="row">
+                                <div class="scroller">
+                                    <h3>Personal Data Protection</h3>
+                                    <p>Project Academy requires an individual's personal details for use in connection with the course/programme/examinations registration purposes. Please thoroughly check to ensure the correctness of all particulars, including the relevant course/programme/examination details, before you click to Proceed below.</p>
+                                    <form id="termsform" class="form-row" role="form">
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" name="confirm1" id="confirm1">For the purpose of the Personal Data Protection Act 2012, I give consent to the holding, processing and using of my personal details provided for all purposes relating to all my registration with PA.</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" name="confirm2" id="confirm2">I confirm that I have fully read and understand the PA <a href="#" data-toggle="modal" data-target="#terms">Terms Of Use</a> relating to the PA website.</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="block1">
+                        <div class="row">
+                            <div class="vcenter">
+                                <form class="form-row" action="<?php print $this->site_url . $this->target_url; ?>" role="form" method="post" enctype="multipart/form-data" onsubmit="return active_profile();">
+            					<input type="hidden" id="sub_ch_pass" name="ch_pass"  />
+                                <input type="hidden" id="sub_ch_fname" name="ch_fname"  />
+                                <input type="hidden" id="sub_ch_lname" name="ch_lname"  />
+                                <input type="hidden" id="sub_ch_phone" name="ch_phone"  />
+                                <input type="hidden" id="sub_ch_neic" name="ch_neic"  />
+                                <input type="hidden" id="sub_ch_job_position" name="ch_job_position"  />
+                                <input type="hidden" id="sub_ch_add" name="ch_add"  />
+                                
+                                
+                                    <div class="btn-group">
+                                        <button class="btn action" type="button">Cancel</button>
+                                        <button class="btn action" type="submit" id="btn_proceed" disabled="true">Proceed</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="modal fade" id="terms" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span class="label fa fa-close"><span>Close</span></span></button>
+                        <h3 class="modal-title">Terms of Use</h3>
+                    </div>
+                    <div class="modal-body terms">
+                        <ol>
+                            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris eget accumsan ipsum. Nulla ornare orci auctor blandit elementum. Fusce pharetra cursus neque, nec sodales metus luctus in. Donec consectetur lacinia feugiat. Integer et dui suscipit, gravida augue nec, tincidunt diam. Phasellus venenatis ligula a arcu egestas vestibulum. Sed lacinia id mi eget sagittis. Maecenas at sem eget eros ullamcorper maximus. Proin venenatis viverra lectus, sit amet varius diam dictum a. Sed egestas condimentum nisl, eu faucibus ipsum bibendum quis. In leo lacus, pulvinar eget nulla quis, cursus efficitur nibh. Phasellus scelerisque ex sed neque volutpat accumsan. Aenean dapibus rhoncus justo sit amet aliquet.</li>
+                            <li>Nunc convallis libero et feugiat facilisis. Ut euismod augue in hendrerit aliquam. Maecenas feugiat velit odio, ac vestibulum nunc dapibus sed. Suspendisse pellentesque metus at lectus euismod congue. Vivamus tempor vulputate sodales. Nullam pretium finibus fringilla. Sed lectus metus, tempus vitae luctus a, porta ac tellus. Proin interdum lectus sit amet egestas faucibus. Pellentesque molestie nulla neque, ac hendrerit dui commodo quis. Etiam luctus sagittis consectetur. In hac habitasse platea dictumst. Fusce quis placerat metus, ut posuere risus. Cras consectetur odio ac luctus aliquet. Etiam feugiat elementum efficitur.</li>
+                            <li>Sed semper lacinia interdum. Nam fermentum purus erat, in dapibus mauris euismod vel. Curabitur in commodo felis. Sed vitae varius neque. Vestibulum pharetra diam eu tincidunt consectetur. Aenean dapibus vel nisi eu auctor. Donec et nunc lectus. Nam vehicula viverra ex vel aliquet. Suspendisse egestas mauris vitae consequat tempus. Phasellus luctus ex gravida nibh sollicitudin, et elementum enim auctor. Suspendisse nec ex massa. Curabitur sit amet felis leo. Quisque lacinia, elit sit amet mattis luctus, lacus nisl pharetra nulla, quis rutrum nulla quam eget velit.</li>
+                            <li>Praesent maximus diam a egestas facilisis. In vitae nunc in nibh pharetra tincidunt. Curabitur a ante nisl. Pellentesque ultricies nisi id sem sagittis egestas. Fusce lacinia tempus placerat. Proin quis faucibus mi. Morbi non ex non quam suscipit tincidunt. Mauris quis enim sapien. Quisque porta est in nisi consequat rutrum. Mauris eu mollis elit. Vestibulum eu diam accumsan, auctor est a, tincidunt nunc. Nam pulvinar augue nec nibh congue aliquam.</li>
+                            <li>Morbi convallis porta erat eu tincidunt. Ut sem turpis, gravida eu est ut, sodales porta enim. Praesent ornare metus in ligula auctor, ac elementum lorem lobortis. Quisque id gravida ante, in suscipit purus. Aliquam eget dapibus mauris, vel finibus arcu. Donec nulla diam, rutrum id congue iaculis, mattis ac odio. In hac habitasse platea dictumst. Morbi aliquam lectus orci, vel dignissim sapien venenatis in. Nulla congue at diam ut ultricies. Duis commodo tempor lacus eget venenatis. Curabitur cursus ultricies urna sed accumsan. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed quis magna ipsum. Fusce enim eros, porttitor et quam sit amet, auctor rhoncus sem. Sed ac eros vel nisi consectetur congue nec id urna. Cras elementum rutrum enim eget ornare.</li>
+                        </ol>
+
+                        <div class="vcenter">
+                            <div class="btn-group">
+                                <a href="user-registration.php" class="btn">Close</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+

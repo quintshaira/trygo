@@ -1,0 +1,237 @@
+<style>
+    .btn-accent {
+    padding: 31px 32px;
+    }
+.btn-grey {
+    display: block;
+    margin: 10px 0;
+}    
+</style>
+<div class="content-wrapper">
+    <div class="content-sidebar transparent">
+        <?php if($this->link) {
+            if($this->driver_status_id!=7)  {  ?>
+            <div>
+               
+                <button type="submit" class="btn-accent" onclick="window.location='<?php echo $this->link?>'"><?php echo $this->name?></button>
+
+                 <?php if($this->back_link) { ?>
+                <button type="submit" class="btn-grey" onclick="window.location='<?php echo $this->back_link?>'">Undo</button>
+                <?php } ?>
+                
+            </div>
+        <?php
+            } }else{
+        ?>
+        <div>
+            <?php
+            if($this->request_detail['request_status_id']==1)
+            {
+                if($this->ob_LoginAuth->chk_menu_permission('Request_Approve') || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                {
+            ?>
+                <button type="submit" class="btn-grey" onclick="window.location='/Request/manage/idd/<?php echo $this->idd;?>/status/2'" >Approve</button>
+                <button type="submit" class="btn-accent" onclick="window.location='/Request/manage/idd/<?php echo $this->idd;?>/status/3'" >Reject</button>
+            <?php
+                }
+            } ?>
+
+        </div>
+        <?php
+        }
+        ?>
+        <table class="table-simple">
+            <tr class="condense">
+                <td><?php echo $this->request_detail['company_name'];?></td>
+                <td class="pull-left"></td>
+            </tr>
+            <tr class="condense">
+                <?php
+                if($this->ses_role==4 && $this->driver_status_id==7)
+                {
+                    ?>
+                    <td>Remitted</td>
+                    <?php
+                }else {
+                    ?>
+                    <td><?php echo ($this->ses_role == 4 && $this->request_status_id == '2') ? 'Garage In' : $this->request_detail['request_status_name']; ?></td>
+                    <?php
+                }
+                ?>
+                <td class="pull-left"></td>
+            </tr>
+
+        </table>
+    </div>
+    <h2 class="heading"><?php echo $this->request_detail['req_gen_id'];?></h2>
+    <h3 class="sub-title sm-font bold">Customer name : <?php echo $this->request_detail['customer_name'];?></h3>
+    <h3 class="sub-title sm-font bold">Contact number : <?php echo $this->request_detail['contact_number'];?></h3>
+    <div class="content-main full">
+        <form class="default-form">
+            <table class="table-simple athird bordered">
+                <tbody>
+                <tr class="border-bottom">
+                    <td class="bold">Assigned Vehicle:</td>
+                    <td class="align-left"><?php echo $this->request_detail['assigned_vehicle_name'] ? $this->request_detail['assigned_vehicle_name'] : 'N/A';?></td>
+
+                    <td class="bold">Payment Method:</td>
+                    <td class="align-left"><?php echo $this->request_detail['payment_method_name'] ? $this->request_detail['payment_method_name'] : 'N/A';?></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Package:</td>
+                    <td class="align-left"><?php echo $this->request_detail['package_name'] ? $this->request_detail['package_name'] : 'N/A';?></td>
+
+
+                    <td class="bold">Estimated Price (Php):</td>
+                    <td class="align-left"><?php echo $this->request_detail['estimated_price'] ? number_format($this->request_detail['estimated_price'] ,2) : 'N/A';?></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Rate:</td>
+                    <td class="align-left"><?php echo $this->request_detail['request_rate_name'] ? $this->request_detail['request_rate_name'] : 'N/A';?></td>
+
+
+                    <td class="bold">Reservation Source:</td>
+                    <td class="align-left">N/A</td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Rent From:</td>
+                    <td class="align-left">
+                        <?php echo $this->request_detail['rent_from'] ? $this->request_detail['rent_from'] : 'N/A';?>
+                        </td>
+
+                    <td class="bold">Notes:</td>
+                    <td class="align-left"><?php echo $this->request_detail['note'] ? $this->request_detail['note'] : 'N/A';?></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Rent To:</td>
+                    <td class="align-left"><?php echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : 'N/A';?></td>
+
+                    <td class="bold">Created By:</td>
+                    <td class="align-left"><?php echo $this->request_detail['requested_by_name'] ? $this->request_detail['requested_by_name'] : 'N/A';?></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Delivery Address:</td>
+                    <td class="align-left"><?php echo $this->request_detail['delivery_address'] ? $this->request_detail['delivery_address'] : 'N/A';?></td>
+
+                    <td class="bold">Approved By:</td>
+                    <td class="align-left"><?php echo $this->request_detail['requested_by_name'] ? $this->request_detail['requested_by_name'] : 'N/A';?></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Assigned Driver 1:</td>
+                    <td class="align-left"><?php echo $this->request_detail['assigned_driver_1_id_name'] ? $this->request_detail['assigned_driver_1_id_name'] : 'N/A';?></td>
+
+                    <td class="bold">Updated On:</td>
+                    <td class="align-left"><?php echo $this->request_detail['mod_date'] ? $this->request_detail['mod_date'] : 'N/A';?></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Pickup Address:</td>
+                    <td class="align-left"><?php echo $this->request_detail['pickup_address'] ? $this->request_detail['pickup_address'] : 'N/A';?></td>
+
+                    <td class="bold"></td>
+                    <td class="align-left"></td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="bold">Assigned Driver 2:</td>
+                    <td class="align-left"><?php echo $this->request_detail['assigned_driver_2_id_name'] ? $this->request_detail['assigned_driver_2_id_name'] : 'N/A';?></td>
+
+                    <td class="bold"></td>
+                    <td class="align-left"></td>
+                </tr>
+
+
+
+
+
+                </tbody>
+            </table>
+            <table class="table-simple athird bordered">
+                <tr class="border-bottom">
+                    <?php
+                    if(count($this->request_images) > 0)
+                    {
+                        $sl=1;
+                        foreach($this->request_images as $k=>$v)
+                        {
+                            if(count($this->request_images)==1)
+                            {
+                                $width = '25%';
+                            }elseif(count($this->request_images)==2)
+                            {
+                                $width = '50%';
+                            }elseif(count($this->request_images)==3)
+                            {
+                                $width = '75%';
+                            }else{
+                                $width = '100%';
+                            }
+                            ?>
+                            <td><img src="/public/uploads/request/<?php echo $v['image_name'];?>" width="<?php echo $width;?>"></td>
+
+                        <?php
+                        }
+                    }
+                    ?>
+
+
+                </tr>
+            </table>
+            <div class="group">
+                <?php
+                if($this->ob_LoginAuth->chk_menu_permission('Driver_request_log')) {
+                    ?>
+                    <div class="input-container-half">
+                        <?php if ($this->all_logs) { ?>
+                            <a href="javascript:void(0)" data-toggle="modal" data-target="#myModal">View Logs</a>
+                        <?php } ?>
+                        <div id="myModal" class="modal fade" role="dialog">
+                            <form class="default-form">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <table class="table-full" data-tablesaw-mode="stack">
+                                            <thead class="sortable">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Driver Name</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php
+                                            $sl = 1;
+                                            foreach ($this->all_logs as $k => $v) {
+
+                              
+
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $sl; ?></td>
+                                                    <td><?php echo $v['user_fname'] . ' ' . $v['user_lname']; ?></td>
+                                                    <td><?php echo $v['status_name']; ?></td>
+                                                    <td><?php echo date('M-d-Y g:i A', strtotime($v['date_time'])); ?></td>
+                                                </tr>
+                                                <?php
+                                                
+
+                                                $sl++;
+                                                
+                                            }
+                                            ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <?php
+                }
+                ?>
+                <button type="button" onclick="cancel('<?php echo $this->cancel_link?>');" class="btn-grey">Go back to list</button></div>
+        </form>
+    </div>
+</div>

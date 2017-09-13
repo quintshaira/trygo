@@ -1,0 +1,189 @@
+<script src="<?php echo $this->site_asset ;?>js/defined_list_fucntions.js"></script>
+<script type="application/javascript">
+    function callback(){
+        var didd = '';
+        check_validate_dates(didd);
+    }
+    function check_validate_dates(didd1){
+        var rent_from = $("#rent_from").val().trim();
+        var rent_to = $("#rent_to").val().trim();
+        var didd=didd1;
+        //alert(didd);
+        if(rent_from && rent_to)
+        {
+            $.ajax({
+                type: 'GET',
+                url: "/Request/checkdates/",
+                data: { rent_from: rent_from , rent_to: rent_to }
+            }).done(function(data) {
+                if(data == 2)
+                {
+                    $("#date_error").val('Y');
+                    $("#err_rent_to").html('Rent To must be equal or greater than Rent From');
+                    //$("#estimated_price").val('0');
+                }else{
+                    $("#date_error").val('N');
+                    $("#err_rent_to").html('&nbsp;');
+                }
+            });
+        }
+
+    }
+    function form_submit()
+    {
+        var error = '';
+        var rent_from = $('#rent_from').val().trim();
+        var rent_to = $('#rent_to').val().trim();
+        var date_error = $("#date_error").val();
+        $("#page").val(1);
+        if(!rent_from)
+        {
+            error += '1';
+            $('#err_rent_from').html('Rent From is Mandatory!');
+        }else{
+            $('#err_rent_from').html('&nbsp;');
+        }
+
+        if(!rent_to)
+        {
+            error += '2';
+            $('#err_rent_to').html('Rent To is Mandatory!');
+        }else{
+            $('#err_rent_to').html('&nbsp;');
+        }
+
+        if(rent_from && rent_to)
+        {
+            if(date_error == 'Y')
+            {
+                error += '3';
+                $("#err_rent_to").html('Rent To must be equal or greater than Rent From');
+            }else{
+                $("#err_rent_to").html("&nbsp;");
+            }
+        }
+
+
+        if(error)
+        {
+            return false;
+        }
+
+
+    }
+
+    function reload()
+    {
+        window.location.href='/Accounts/drivers';
+    }
+
+
+
+
+</script>
+<div class="content-wrapper">
+    <div class="">
+        <h2 class="heading bold">Driver Search</h2>
+    </div>
+    <div class="content-main full">
+        <div class="team-title">
+            <form class="default-form" id="search_form" action=""  method="post" onsubmit="return form_submit();">
+                <input type="hidden" name="date_error" id="date_error" value="">
+                <input type="hidden" value="<?php print $this->num_row; ?>" id="num_row" name="num_row">
+                <input type="hidden" value="<?php print $this->page; ?>" id="page" name="page">
+                <input type="hidden" value="<?php print $order_col=$this->order_col; ?>" id="order_col" name="order_col">
+                <input type="hidden" value="<?php print $order_typ=$this->order_typ; ?>" id="order_typ" name="order_typ">
+                <input type="hidden" id="del_con_global" name="del_con_global" value=""/>
+                <div class="form-group">
+                    <label for="uid">Rent From: <span class="red">*</span><br></label>
+                    <div class="input-container">
+
+                        <div class="input-group date form_datetime col-md-8" id="rent_from_div">
+                            <input class="form-control" placeholder="Rent From" type="text" id="rent_from" name="rent_from"  onblur="chk_dates_validate()" value="<?php echo $this->rent_from ? $this->rent_from : '' ?>">
+                            <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                        <span class="error" id="err_rent_from">&nbsp;</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="uid">Rent To: <span class="red">*</span><br></label>
+                    <div class="input-container">
+
+                        <div class="input-group date form_datetime col-md-8" id="rent_to_div">
+                            <input class="form-control" placeholder="Rent To" type="text" id="rent_to" name="rent_to" onblur="chk_dates_validate()"  value="<?php echo $this->rent_to ? $this->rent_to : '' ?>">
+                            <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+
+                        <span class="error" id="err_rent_to">&nbsp;</span>
+
+                    </div>
+                </div>
+
+                <div class="group">
+                    <button type="button" onclick="reload();" class="btn-grey">Clear</button>
+                    <button type="submit"  class="btn-green">Search</button>
+                </div>
+            </form>
+
+        </div>
+
+        <?php
+        if($this->count_print==0) {
+            ?>
+            <div class="alert alert-warning">
+                <strong>No Driver available!</strong>
+            </div>
+            <?php
+        }
+        if($this->count_print) {
+            ?>
+            <div class="alert alert-success">
+                <strong><?php echo $this->count_rows > 1 ? $this->count_rows.' Drivers Found': $this->count_rows.' Driver Found' ?></strong>
+            </div>
+            <table class="table-full" data-tablesaw-mode="stack">
+                <thead class="sortable">
+                <tr>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Company'); ?><?php print $this->page_sorting_images['company_id']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Driver Name'); ?><?php print $this->page_sorting_images['user_fname']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Username'); ?><?php print $this->page_sorting_images['email']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Added by'); ?><?php print $this->page_sorting_images['added_by_name']; ?></th>
+                   <!-- <?php
+/*                    if ($this->ob_LoginAuth->chk_menu_permission('Edit_User')
+                        || $this->ob_LoginAuth->chk_menu_permission('Delete_User')
+                    ) {
+                        */?>
+                        <th>Manage</th>
+                    --><?php /*}  */?>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $sl = 1;
+                foreach ($this->driver_rows as $k => $v) {
+                    $idd = $v['user_id'];
+                    ?>
+                    <tr>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['company_name'], $idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'], $idd); ?></td>
+                        <td><a href="/Accounts/userdetails/idd/<?php echo $idd;?>"><?php print $this->ob_LoginAuth->set_excel_values($v['email'], $idd); ?></a> </td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['added_by_name'], $idd); ?></td>
+                    </tr>
+                    <?php
+                    $sl++; } ?>
+                </tbody>
+            </table>
+            <?php print $this->page_peginetion; ?>
+        <?php } ?>
+
+    </div>
+</div>
+
+
+
+
+
+
+</div>

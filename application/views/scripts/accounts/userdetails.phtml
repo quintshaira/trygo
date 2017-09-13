@@ -1,0 +1,117 @@
+<?php
+//echo '<pre>'; print_r($this->user_detail); exit;
+?>
+<div class="content-wrapper">
+    <div class="content-sidebar transparent">
+        <div class="align-center">
+            <h2 class="title">Rent A Car</h2>
+            <h3 class="sub-title sm-font bold"><?php echo $this->user_detail['is_active'] ? 'Active' : 'Inactive'?></h3>
+        </div>
+    </div>
+    <div class="content-main transparent">
+        <h2 class="heading bold"><a href="#"><?php echo $this->user_detail['user_fname'].' '.$this->user_detail['user_lname']?></a></h2>
+        <table class="table-simple half">
+            <tr class="condense">
+                <td class="bold"><?php echo $this->user_detail['nick_name']?></td>
+                <td class="align-left"></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold"><?php echo $this->user_detail['email']?></td>
+                <td class="align-left"></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Created At</td>
+                <td class="green align-left"><?php echo date("F j, Y" ,strtotime($this->user_detail['add_date'])); ?></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Updated At </td>
+                <td class="green align-left"><?php echo date("F j, Y" ,strtotime($this->user_detail['mod_date']));?></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Verified On</td>
+                <td class="green align-left"><?php echo date("F j, Y" ,strtotime($this->user_detail['add_date']));?></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Verified By</td>
+                <td class="green align-left"><?php echo $this->user_detail['created_by_name']?></td>
+            </tr>
+        </table>
+    </div>
+    <?php
+    if($this->user_detail['account_id']==4)
+    {
+    ?>
+    <div class="content-tabs full">
+        <div class="tabbable">
+            <div class="btns">
+                <button type="button" onclick="cancel('/Accounts/useraccounts');" class="btn-grey">Go back to list</button>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab1" data-toggle="tab">Request Assigned</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab1">
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th>#</th>
+                            <th>Request ID</th>
+                            <th>Schedule</th>
+                            <th>Address</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        foreach($this->request_list as $k=>$v)
+                        {
+                            $idd=$v['request_id'];
+                        ?>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <?php
+                                if($this->ob_LoginAuth->chk_menu_permission('Request_Details'))
+                                {
+                                    ?>
+                                    <a href="/Request/details/idd/<?php echo $v['request_id'];?>">
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                    </a>
+                                <?php
+                                }else{  ?>
+
+                                    <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                <?php
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <?php
+                                echo $v['driver_task_name']=='Delivery'
+                                ||$v['driver_task_name']=='Driver'
+                                    ? date('M-d-Y g:i A',strtotime($v['rent_from']))
+                                    : date('M-d-Y g:i A',strtotime($v['rent_to']))
+                                ?></td>
+                            <td><?php
+                                echo $v['driver_task_name']=='Delivery'
+                                ||$v['driver_task_name']=='Driver'
+                                    ? $v['delivery_address']
+                                    : $v['pickup_address']
+                                ?></td>
+
+                        </tr>
+                        <?php
+                        }
+                        ?>
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <?php
+    }
+    ?>
+</div>

@@ -1,0 +1,306 @@
+<script type="application/javascript">
+
+    function sub_check()
+    {
+		var idd = $("#idd").val().trim();
+        var fname=$("#first_name").val().trim();
+        var lname=$("#last_name").val().trim();
+        var nickname = $("#nickname").val().trim();
+        var email=$("#user_name").val().trim();
+        var pass=$("#password").val().trim();
+        var repass=$("#confirm_password").val().trim();
+        var company=$("#company").val().trim();
+        var account = $("#account").val().trim();
+        var status = $("#status").val().trim();
+
+
+       // var access_level=$("#access_level").val().trim();
+		var em_ex=$("#em_ex").val().trim();
+        //var user_id=$("#user_id").val()*1;
+        //alert(is_email_present);*/
+
+        //alert("hello"+fname+lname+email+pass+repass+group+access_level);
+
+        var err_vl="";
+		
+		
+		if(!email)
+		{
+			err_vl+="1";
+			$("#err_user_name").html("Username is Mandatory");
+		}else if(!ValidateEmail(email)){
+            err_vl+="2";
+            $("#err_user_name").html("Please Enter a valid Email as Username");
+			
+        }else if(em_ex==1)
+		{
+			err_vl+="3";
+            $("#err_user_name").html("Please select another email.");
+		}else{
+			$("#err_user_name").html("&nbsp;");
+		}
+
+        if(!idd)
+		{
+            if(!ValidatePassword(pass))
+            {
+                err_vl+="12";
+                $("#err_password").html("Password must be 6 characters long");
+                $("#err_confirm_password").html("&nbsp;");
+            }else{
+                $("#err_password").html("&nbsp;");
+                if(pass!=repass){
+                    err_vl+="5";
+                    $("#err_confirm_password").html("Password does not match");
+                }
+                else{
+                    $("#err_confirm_password").html("&nbsp;");
+                }
+            }
+
+		}else{
+            if(pass)
+            {
+                if(!ValidatePassword(pass))
+                {
+                    err_vl+="12";
+                    $("#err_password").html("Password must be 6 characters long");
+                    $("#err_confirm_password").html("&nbsp;");
+                }else{
+                    $("#err_password").html("&nbsp;");
+                    if(pass!=repass){
+                        err_vl+="6";
+                        $("#err_confirm_password").html("Password does not match");
+                    }
+                    else{
+                        $("#err_confirm_password").html("&nbsp;");
+                    }
+                }
+            }
+		}
+
+
+        if(!ValidateFname(fname)){
+            err_vl+="7";
+            $("#err_first_name").html("Please Enter a valid First Name");
+        }
+        else{
+            $("#err_first_name").html("&nbsp;");
+        }
+
+        if(!ValidateLname(lname)){
+            err_vl+="8";
+            $("#err_last_name").html("Please Enter a valid Last Name");
+        }
+        else{
+            $("#err_last_name").html("&nbsp;");
+        }
+
+        if(!ValidateLname(nickname)){
+            err_vl+="11";
+            $("#err_nickname").html("Please Enter a valid Nickname");
+        }
+        else{
+            $("#err_nickname").html("&nbsp;");
+        }
+
+
+
+        if(account==""){
+            err_vl+="10";
+            $("#err_account").html("Please select your Account");
+        }
+        else if(account > 1){
+            if(company==""){
+                err_vl+="9";
+                $("#err_company").html("Please select your Company");
+            }
+            else{
+                $("#err_group").html("&nbsp;");
+            }
+            $("#err_account").html("&nbsp;");
+        }else{
+            $("#err_company").html("&nbsp;");
+        }
+
+
+        if(err_vl!="")
+        {return false;}
+
+    }
+
+
+
+    function check_user_name(email)
+    {
+		if(!email)
+		{
+			$("#err_user_name").html("Username (E-mail) is Mandatory.");
+		}else{
+			var idd = $("#idd").val().trim();
+				$.ajax({
+					type: 'GET',
+					url: "/accounts/dupemail/",
+					data: { U_email: email,idd: idd }
+				}).done(function(data) {
+					if(data >= 1)
+					{
+						$("#em_ex").val('1');
+						$("#err_user_name").html("Please select another User name (E-mail).");
+					}else{
+						$("#err_user_name").html("&nbsp;");
+						$("#em_ex").val('0');
+					}
+
+
+				});
+		}
+    }
+
+
+    function change_account(value)
+    {
+
+        if(value==1)
+        {
+            //alert('1');
+            $("#company").val("");
+            $("#err_company").html("&nbsp;");
+            $("#company_div").hide();
+        }else{
+            $("#company_div").show();
+        }
+    }
+
+    window.onload = function(e){
+        var idd  = $("#idd").val();
+        var account  = $("#account").val();
+        if(idd)
+        {
+            change_account(account);
+        }
+    }
+</script>
+<div class="content-wrapper">
+<h2 class="heading"><?php echo $this->user_detail['user_id'] ? 'Update User' : 'Add a New User' ?></h2>
+    <div class="content-main full">
+        <form class="default-form" action="/Accounts/submituser/" onsubmit="return sub_check();" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="em_ex" id="em_ex">
+		<input type="hidden" name="idd" id="idd" value="<?php echo $this->user_detail['user_id'] ? $this->user_detail['user_id'] : '' ?>">
+
+            <div class="form-group">
+                <label for="uid">First Name: <span class="red">*</span><br></label>
+                <div class="input-container">
+                    <input type="text" placeholder="First Name" id="first_name"  name="first_name" value="<?php echo $this->user_detail['user_fname'] ? $this->user_detail['user_fname'] : '' ?>" >
+                    <span class="error" id="err_first_name">&nbsp;</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="uid">Last Name: <span class="red">*</span><br></label>
+                <div class="input-container">
+                    <input type="text" placeholder="Last Name"  id="last_name"  name="last_name" value="<?php echo $this->user_detail['user_lname'] ? $this->user_detail['user_lname'] : '' ?>" >
+                    <span class="error" id="err_last_name">&nbsp;</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="uid">Nickname: <span class="red">*</span><br></label>
+                <div class="input-container">
+                    <input type="text" placeholder="Nickname" id="nickname"  name="nickname" value="<?php echo $this->user_detail['nick_name'] ? $this->user_detail['nick_name'] : '' ?>" >
+                    <span class="error" id="err_nickname">&nbsp;</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="uid">User name (E-mail): <span class="red">*</span><br></label>
+                <div class="input-container">
+                    <input type="text" placeholder="User Name" id="user_name"  name="user_name" value="<?php echo $this->user_detail['email'] ? $this->user_detail['email'] : '' ?>" onblur="return check_user_name(this.value);">
+                    <span class="error" id="err_user_name">&nbsp;</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pass1">Password: <span class="red">*</span><br> <span class="smalltext required">Minimum of 6 characters</span></label>
+                <div class="input-container">
+                    <input type="password"  placeholder="****" id="password"  name="password" >
+                    <span class="error" id="err_password">&nbsp;</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pass2" class="control-label"> <span class="smalltext required"> </span>Confirm Password <span class="red">*</span></label>
+                <div class="input-container">
+                    <input type="password" placeholder="****" id="confirm_password"  name="confirm_password">
+                    <span class="error" id="err_confirm_password">&nbsp;</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pass2" class="control-label">Account <span class="red">*</span><span class="smalltext required"></label>
+                <div class="input-container">
+                    <select name="account" id="account" onchange="change_account(this.value);">
+                        <option value="">Select</option>
+                        <?php foreach($this->accountList as $k=>$v){?>
+                            <option value="<?php echo $v['account_id']; ?>"
+                                <?php if($v['account_id']==$this->user_detail['account_id']){ echo 'selected';} ?>><?php echo $v['account_name']; ?></option>
+                        <?php }?>
+
+                    </select>
+                    <span class="error" id="err_account">&nbsp;</span>
+                </div>
+            </div>
+
+
+            <?php if ($_SESSION['tranzgo_session']['account_id'] == 1) { ?>
+                    <div class="form-group" id="company_div">
+                        <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+
+                        <div class="input-container">
+                            <select name="company" id="company">
+                                <option value="">Select</option>
+                                <?php foreach ($this->companyList as $k => $v) { ?>
+                                    <option value="<?php echo $v['company_id']; ?>"
+                                        <?php if ($v['company_id'] == $this->user_detail['company_id']) {
+                                            echo 'selected';
+                                        } ?>><?php echo $v['company_name']; ?></option>
+                                <?php } ?>
+                            </select>
+                            <span class="error" id="err_company">&nbsp;</span>
+                        </div>
+                    </div>
+                <?php } else { ?>
+                    <div class="form-group" id="company_div">
+                        <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+
+                        <div class="input-container">
+                            <select name="company" id="company">
+                                <option
+                                    value="<?php echo $this->getCompanyBySessId['company_id']; ?>"><?php echo $this->getCompanyBySessId['company_name']; ?></option>
+                            </select>
+                            <span class="error" id="err_company">&nbsp;</span>
+                        </div>
+                    </div>
+                    <?php } ?>
+
+            <div class="form-group">
+                <label for="pass2" class="control-label">Status <span class="smalltext required"></label>
+                <div class="input-container">
+                    <select name="status" id="status">
+                        <option value="1" <?php if($this->user_detail['is_active']==1 || !$this->user_detail['user_id']){ echo 'selected';} ?>>Active</option>
+                        <option value="0" <?php if($this->user_detail['is_active']==0 && $this->user_detail['user_id']){ echo 'selected';} ?>>Inactive</option>
+
+
+                    </select>
+                    <span class="error" id="err_status">&nbsp;</span>
+                </div>
+            </div>
+            <div class="group">
+                <button type="button" onclick="cancel('<?php echo $this->cancel_link?>');" class="btn-grey">Cancel</button>
+                <button type="submit" class="btn-green"><?php echo $this->user_detail['user_id'] ? 'Update User' : 'Add User' ?></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    change_account(1);
+</script>

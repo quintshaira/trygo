@@ -1,0 +1,181 @@
+<?php $user_details=$this->user_details;?>
+<script type="application/javascript">
+    function check_sub()
+    {
+        var idd = $("#idd").val().trim();
+        var ch_fname=$("#fname").val().trim();
+        var ch_lname=$("#lname").val().trim();
+        var ch_email=$("#email").val().trim();
+        var pass=$("#pass").val().trim();
+        var re_pass=$("#repass").val().trim();
+        var is_email_present=$("#em_ex").val()*1;
+        var error_str="";
+
+        if(!(ch_fname))
+        {
+            error_str = '1';
+            $("#err_fname").html("Please Enter a valid First Name.");
+        }else{
+            $("#err_fname").html("&nbsp;");
+        }
+        if(!(ch_lname))
+        {
+            error_str = '2';
+            $("#err_lname").html("Please Enter a valid Last Name.");
+        }else{
+            $("#err_lname").html("&nbsp;");
+        }
+
+        if(!ch_email)
+        {
+            error_str = '5';
+            $("#err_email").html("Email is Mandatory");
+        }else{
+            if(!ValidateEmail(ch_email))
+            {
+                error_str = '3';
+                $("#err_email").html("Give a valid Email.");
+            }else{
+                if(is_email_present)
+                {
+                    error_str = '4';
+                    $("#err_email").html("Please select another email.");
+                }else{
+                    $("#err_email").html("&nbsp;");
+                }
+            }
+        }
+
+
+
+        if(!idd)
+        {
+            if(!ValidatePassword(pass))
+            {
+                error_str ="12";
+                $("#err_pass").html("Password must be 6 characters long");
+                $("#err_repass").html("&nbsp;");
+            }else{
+                $("#err_pass").html("&nbsp;");
+                if(pass!=re_pass){
+                    error_str ="5";
+                    $("#err_repass").html("Password does not match");
+                }
+                else{
+                    $("#err_repass").html("&nbsp;");
+                }
+            }
+
+        }else{
+            if(pass)
+            {
+                if(!ValidatePassword(pass))
+                {
+                    error_str ="12";
+                    $("#err_pass").html("Password must be 6 characters long");
+                    $("#err_repass").html("&nbsp;");
+                }else{
+                    $("#err_pass").html("&nbsp;");
+                    if(pass!=re_pass){
+                        error_str ="6";
+                        $("#err_repass").html("Password does not match");
+                    }
+                    else{
+                        $("#err_repass").html("&nbsp;");
+                    }
+                }
+            }
+        }
+
+        //alert(error_str);
+
+
+        if(error_str){return false};
+    }
+
+    function exist_email()
+    {
+        var email=$("#email").val().trim();
+        if(!email)
+        {
+            $("#err_email").html("Email is Mandatory.");
+        }else{
+            if(!ValidateEmail(email)){
+                $("#err_email").html("Please Enter a valid Email");
+                $("#is_email_valid").val('0');
+                $("#em_ex").val('0');
+            }else{
+                var idd = $("#idd").val().trim();
+                $.ajax({
+                    type: 'GET',
+                    url: "/accounts/dupemail/",
+                    data: { U_email: email,idd: idd }
+                }).done(function(data) {
+                        if(data >= 1)
+                        {
+                            $("#em_ex").val('1');
+                            $("#err_email").html("Please select another email.");
+                            $("#is_email_valid").val('1');
+                        }else{
+                            $("#err_email").html("&nbsp;");
+                            $("#em_ex").val('0');
+                            $("#is_email_valid").val('1');
+                        }
+                    });
+            }
+
+        }
+    }
+</script>
+<div class="content-wrapper">
+    <h2 class="heading">Profile</h2>
+    <div class="content-main full">
+        <form class="default-form" action="/index/updateprofile" onsubmit="return check_sub();" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="em_ex" id="em_ex">
+            <input type="hidden" name="is_email_valid" id="is_email_valid">
+            <input type="hidden" id="idd" value="<?php print $user_details['user_id']; ?>">
+            <div class="form-group">
+                <label for="uid">User ID: <br> <span class="smalltext">Use your email address</span></label>
+                <div class="input-container">
+                    <input type="text"  id="email" placeholder="Email Address" name="email" value="<?php echo $user_details['email'];?>" onblur="return exist_email();">
+                    <span class="error" id="err_email">&nbsp;</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pass1">Password: <br> <span class="smalltext">Minimum of 6 characters</span></label>
+                <div class="input-container">
+                    <input type="password"  id="pass" placeholder="****" name="pass" >
+                    <span class="error" id="err_pass">&nbsp;</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pass2" class="control-label">Confirm Password</label>
+                <div class="input-container">
+                    <input type="password"  id="repass" placeholder="****" name="repass">
+                    <span class="error" id="err_repass">&nbsp;</span>
+                </div>
+            </div>
+            <div class="spacer"></div>
+            <div class="form-group">
+                <label class="control-label">Name</label>
+                <div class="input-container-half">
+                    <input type="text" placeholder="First Name" name="fname" id="fname" value="<?php print $user_details['user_fname']; ?>">
+                    <span class="error" id="err_fname">&nbsp;</span>
+                </div>
+                <div class="input-container-half">
+                    <input type="text" placeholder="Last Name" name="lname" id="lname" value="<?php echo $user_details['user_lname'];?>">
+                    <span class="error" id="err_lname">&nbsp;</span>
+                </div>
+            </div>
+            <div class="group">
+                <button type="button" onclick="cancel('<?php echo $this->cancel_link;?>');" class="btn-grey">Cancel</button>
+                <?php if($this->ob_LoginAuth->chk_menu_permission('Update_Profile')){ ?>
+                    <button type="submit" class="btn-green">Update</button>
+                <?php }else { ?>
+                    <button type="submit" class="btn-green" disabled >Update</button>
+                <?php } ?>
+            </div>
+        </form>
+    </div>
+</div>

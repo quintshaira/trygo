@@ -1,0 +1,174 @@
+</div>
+</body>
+<!-- Main Body End -->
+<script src="<?php print $this->site_asset; ?>js/jquery-2.1.4.min.js"></script>
+<script src="<?php print $this->site_asset; ?>js/bootstrap-switch.min.js"></script>
+<script src="<?php print $this->site_asset; ?>js/bootstrap.min.js"></script>
+<script src="<?php print $this->site_asset; ?>js/tablesaw.js"></script>
+<script src="<?php print $this->site_asset; ?>js/tablesaw-init.js"></script>
+<script src="<?php print $this->site_asset; ?>js/bootstrap-multiselect.js"></script>
+<script src="<?php print $this->site_asset; ?>js/script.js"></script>
+<script src="<?php print $this->site_asset; ?>js/defined_functions.js"></script>
+<script src="<?php print $this->site_asset; ?>js/defined_list_fucntions.js"></script>
+<script src="<?php print $this->site_asset; ?>js/jquery.spinner.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#delivery_address_star").hide();
+        $("#pickup_address_star").hide();
+        $("#assigned_driver1_star").hide();
+        $("#assigned_driver2_star").hide();
+        var req_idd = $("#req_idd").val() ? $("#req_idd").val().trim() : '';
+        var didd = '';
+        var rent_from = $("#rent_from").val() ? $("#rent_from").val().trim() : '';
+        var rent_to = $("#rent_to").val() ? $("#rent_to").val().trim() : '';
+        if(req_idd)
+        {
+            var cust_id = $("#cust_id").val().trim();
+            if(cust_id)
+            {
+                $("#contact_no_div").hide();
+                $("#contact_number").val("");
+
+            }
+
+
+            var driver_task_id = $("#driver_task_id").val().trim();
+            var rental_id = $("#rental_id").val().trim();
+
+            if(driver_task_id=='1' || driver_task_id=='3')
+            {
+                didd = $("#assigned_driver_1_id").val().trim();
+                check_available_drivers1(rent_from,rent_to,didd,req_idd);
+
+            }else{
+                didd = $("#assigned_driver_2_id").val().trim();
+                check_available_drivers2(rent_from,rent_to,didd,req_idd);
+            }
+
+            change_validate(driver_task_id);
+            check_available_vehicles(rent_from,rent_to,rental_id);
+
+        }
+
+    });
+</script>
+
+
+<!-- This is for pagination  -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+
+<!-- This is for pagination  -->
+<script src="<?php print $this->site_asset; ?>js/jquery.easy-autocomplete.min.js"></script>
+<script>
+    var options = {
+        //url: "/public/assets/people.json",
+        url: "/Request/getallcustomers",
+        getValue: "name",
+        list: {
+            match: {
+                enabled: true
+            }
+        },
+        theme: "plate-dark",
+        callBack:1
+    };
+    $("#customer_name").easyAutocomplete(options);
+    if(options.callBack)
+    {
+        function get_id()
+        {
+            var customer_name = $("#customer_name").val().trim();
+            $.ajax({
+                type: 'GET',
+                url: "/Request/getcustomerid/",
+                data: { customer_name: customer_name}
+            }).done(function(data) {
+                if(data > 0)
+                {
+                    $("#cust_id").val(data);
+                    $("#contact_no_div").hide();
+                    $("#contact_number").val("");
+
+                }else{
+                    $("#cust_id").val('0');
+                    $("#contact_no_div").show();
+                }
+            });
+        }
+    }
+    function hide_customer_phone()
+    {
+        $("#cust_id").val('0');
+        $("#contact_no_div").show();
+    }
+
+
+</script>
+
+
+<!-- This is datetimepicker  -->
+<script type="text/javascript" src="<?php print $this->site_asset; ?>js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript">
+    $('#rent_to_div').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        forceParse: 0,
+        showMeridian: 1,
+        is_call_back: 1
+    }
+    );
+
+
+    $('#rent_from_div').datetimepicker({
+            //language:  'fr',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1,
+            is_call_back: 1
+        }
+    );
+
+    $(".dtd").hide();
+    $(".dtp").hide();
+
+
+</script>
+
+<script>
+    $(document).ready(function(){
+
+
+        $(".date_popup_wrap").fadeOut();
+        $('.date_cell').mouseenter(function(){
+            date = $(this).attr('date');
+            $(".date_popup_wrap").fadeOut();
+            $("#date_popup_"+date).fadeIn();
+        });
+        $('.date_cell').mouseleave(function(){
+            $(".date_popup_wrap").fadeOut();
+        });
+        $('.month_dropdown').on('change',function(){
+            getCalendar('calendar_div',$('.year_dropdown').val(),$('.month_dropdown').val());
+        });
+        $('.year_dropdown').on('change',function(){
+            getCalendar('calendar_div',$('.year_dropdown').val(),$('.month_dropdown').val());
+        });
+        $(document).click(function(){
+            $('#event_list').slideUp('slow');
+        });
+
+        //check_validate_dates();
+
+    });
+
+</script>
+</html>

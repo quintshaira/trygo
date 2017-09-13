@@ -1,0 +1,1295 @@
+<style>
+
+    @media(max-width:768px){
+        .custom_track_padding_b{
+            padding-right: 4% !important;
+            
+        }
+        
+    }
+    .custom_task_no {
+    text-align: center;
+}
+</style>
+
+<?php
+$tot_outs=0;
+foreach($this->TD_duepay_rows as $k=>$v)
+{
+$tot_outst+=$v['estimated_price'];
+//$tot_outst+=$v['recieved_amount'];
+}
+$tot_outs_rem=0;
+foreach($this->TD_remitted_rows as $k=>$v)
+{
+//$tot_outs_rem+=$v['estimated_price'];
+$tot_outs_rem+=$v['recieved_amount'];
+
+}
+
+$mtot_outs=0;
+foreach($this->MTD_duepay_rows as $k=>$v)
+{
+    $mtot_outst+=$v['estimated_price'];
+}
+$mtot_outs_rem=0;
+foreach($this->MTD_remitted_rows as $k=>$v)
+{
+    $mtot_outs_rem+=$v['recieved_amount'];
+}
+
+$ytot_outs=0;
+foreach($this->YTD_duepay_rows as $k=>$v)
+{
+    $ytot_outst+=$v['estimated_price'];
+}
+$ytot_outs_rem=0;
+foreach($this->YTD_remitted_rows as $k=>$v)
+{
+    $ytot_outs_rem+=$v['recieved_amount'];
+}
+?>
+
+<script type="application/javascript">
+
+    function check_sub()
+    {
+        //alert('all done');return false;
+    }
+    function change_tab(keyy)
+    {
+        document.getElementById("TD_TAB").style.display='none';
+        document.getElementById("MTD_TAB").style.display='none';
+        document.getElementById("YTD_TAB").style.display='none';
+
+        document.getElementById("TD_KEY").style.color='black';
+        document.getElementById("MTD_KEY").style.color='black';
+        document.getElementById("YTD_KEY").style.color='black';
+
+        document.getElementById(keyy+"_TAB").style.display='block';
+        document.getElementById(keyy+"_KEY").style.color='blue';
+    }
+    function do_popup(tab,val,price)
+    {
+
+
+
+
+        if(price)
+        {
+            $("#due_amount").html(currency_format(price));
+            $("#due_amount1").val(price);
+        }
+
+        $("#recieved_amount").val()!="" ? $("#recieved_amount").val(''):'';
+        $("#recieved_remarks").val()!="" ? $("#recieved_remarks").val(''):'';
+        $("#updateid").val(val);
+        $("#tabs").val(tab);
+    }
+    function do_popup_assignment(tab,val)
+    {
+
+        $("#tab").val(tab);
+       $("#req_idd").val(val);
+        $.ajax({
+            type: 'GET',
+            url: "/Request/manage",
+            data: { iddDash: val}
+        }).done(function(data) {
+            var t = JSON.parse(data);
+            var request_id = t.request_id;
+            var rent_from = t.rent_from;
+            var rent_to = t.rent_to;
+            var rental_id = t.vehicle_id;
+            var driver_task_id = t.driver_task_id;
+            $("#driver_task_id").val(driver_task_id);
+            $("#rental_id").val(rental_id);
+            check_available_vehicles(rent_from,rent_to,rental_id);
+            change_validate(driver_task_id);
+            if(driver_task_id==1 || driver_task_id==3)
+            {
+                var didd = t.assigned_driver_1_id;
+                var add = t.delivery_address;
+                check_available_drivers1(rent_from,rent_to,didd,request_id);
+                $("#delivery_address").val(add);
+
+
+
+            }else{
+                var didd = t.assigned_driver_2_id;
+                var add = t.pickup_address;
+                check_available_drivers2(rent_from,rent_to,didd,request_id);
+
+
+                $("#pickup_address").val(add);
+
+
+            }
+
+
+
+        });
+    }
+
+
+
+
+
+    function change_validate(value)  {
+        if(value=='1' || value=='3')
+        {
+            $(".dtd").show();
+            $(".dtp").hide();
+            $("#delivery_address_star").show();
+            $("#pickup_address_star").hide();
+
+            $("#assigned_driver_2_id").val("");
+            $("#pickup_address").val("");
+
+
+        }else if(value=='2')
+        {
+            $(".dtd").hide();
+            $(".dtp").show();
+            $("#pickup_address_star").show();
+            $("#delivery_address_star").hide();
+            $("#assigned_driver_1_id").val("");
+            $("#delivery_address").val("");
+
+        }else{
+            $(".dtd").hide();
+            $(".dtp").hide();
+            $("#pickup_address_star").hide();
+            $("#delivery_address_star").hide();
+            $("#assigned_driver_1_id").val("");
+            $("#delivery_address").val("");
+            $("#assigned_driver_2_id").val("");
+            $("#pickup_address").val("");
+        }
+    }
+
+    function check_available_vehicles(rent_from,rent_to,rental_id){
+        var html = '<select name="rental_id" id="rental_id">';
+        $.ajax({
+            type: 'GET',
+            url: "/Request/checkavailabevehicle/",
+            data: { rent_from: rent_from , rent_to: rent_to , rental_id:rental_id}
+        }).done(function(data) {
+            //alert(data);
+            var t = JSON.parse(data);
+            //alert(t[0].rental_id);
+
+            for(var i=0;i<t.length;i++)
+            {
+                html += '<option value="'+ t[i].rental_id+'">'+t[i].assigned_vehicle_name+'</option>';
+            }
+            //alert(t.length);
+
+            $("#rental_id").html(html);
+            $("#rental_id").val(rental_id);
+        });
+        //$('#rental_id option[value=13]').attr('selected','selected');
+
+
+    }
+    function check_available_drivers1(rent_from,rent_to,didd,req_idd){
+        //alert(didd);
+        var html = '<select name="assigned_driver_1_id" id="assigned_driver_1_id">';
+        $.ajax({
+            type: 'GET',
+            url: "/Request/checkavailabedrivers1/",
+            data: { rent_from: rent_from , rent_to: rent_to ,didd:didd }
+        }).done(function(data) {
+            var t = JSON.parse(data);
+            for(var i=0;i<t.length;i++)
+            {
+                html += '<option value="'+ t[i].user_id+'">'+t[i].user_full_name+'</option>';
+            }
+            $("#assigned_driver_1_id").html(html);
+            $("#assigned_driver_1_id").val(didd);
+        });
+        //alert(didd);
+        //$("#assigned_driver_1_id").val(didd);
+
+    }
+    function check_available_drivers2(rent_from,rent_to,didd,req_idd){
+        //alert(didd);
+
+        var html = '<select name="assigned_driver_2_id" id="assigned_driver_2_id">';
+        $.ajax({
+            type: 'GET',
+            url: "/Request/checkavailabedrivers2/",
+            data: { rent_from: rent_from , rent_to: rent_to ,didd:didd}
+        }).done(function(data) {
+            var t = JSON.parse(data);
+            for(var i=0;i<t.length;i++)
+            {
+                html += '<option value="'+ t[i].user_id+'">'+t[i].user_full_name+'</option>';
+            }
+            $("#assigned_driver_2_id").html(html);
+            $("#assigned_driver_2_id").val(didd);
+        });
+
+        //$("#assigned_driver_2_id").val(didd);
+
+    }
+
+    function currency_format(n) {
+        return n.toFixed(2).replace(/./g, function(c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+        });
+    }
+</script>
+<div class="content-wrapper">
+    <h2 class="heading">Dashboard</h2>
+    <div class="pull-right custom_track_padding_b">Track: <a href="http://track.tranzwatch.com/" class="">Desktop</a> | <a href="http://track.tranzwatch.com/m" class="">Mobile</a> </div><br>
+        <div style="margin-bottom: 10px;"><span class="pull-right custom_track_padding_b">
+            <div> Rented: <?php print $this->TD_rented_car_count; ?> | Available: <?php print (($this->TD_total_car_count)-($this->TD_rented_car_count)); ?> | Down: <?php print $this->TD_down_car_count; ?></div></span></div>
+
+    <div class="content-tabs full">
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li <?php if($this->tabshow==1) { ?>class="active" <?php } ?>><a href="#tab1" data-toggle="tab">TODAY</a></li>
+                <li <?php if($this->tabshow==2) { ?>class="active" <?php } ?>><a href="#tab2" data-toggle="tab">MTD</a></li>
+                <li <?php if($this->tabshow==3) { ?>class="active" <?php } ?>><a href="#tab3" data-toggle="tab">YTD</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane <?php if($this->tabshow==1) { ?>active<?php } ?>" id="tab1">
+                    <div class="spacer"></div>
+
+                    <?php if($this->role==2) { ?>
+                    <h2 class="sub-title">For Approval:
+                           <span class="pull-right custom_track_padding_b">
+                                <!--<a href="/Download/listexporttoexcelall/export_id/1/tab_id/1" class="btn btn-default">Export To EXCEL</a>-->
+                           </span>
+                    </h2>
+                        <table class="table-full center" data-tablesaw-mode="stack">
+                            <thead class="sortable">
+                            <tr>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?></th>
+                                <?php if($this->ses_role==1) { ?>
+                                    <th><?php print $this->ob_LoginAuth->set_excel_header('Company');?></th>
+                                <?php } ?>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('From');?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('To');?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Task');?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Customer');?></th>
+                                <?php
+                                if( $this->ob_LoginAuth->chk_menu_permission('Request_Approve')
+                                    || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                                {
+                                    ?>
+                                    <th>Manage</th>
+                                    <?php
+                                }
+                                ?>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            $sl = 1;
+                            foreach($this->TD_approved_rows as $k=>$v)
+                            {
+                                $idd=$v['request_id'];
+                                ?>
+                                <tr>
+                                    <td>
+                                        <?php
+                                        if($this->ob_LoginAuth->chk_menu_permission('Request_Details'))
+                                        {
+                                            ?>
+                                            <a href="/Request/details/idd/<?php echo $v['request_id'];?>">
+                                                <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                            </a>
+                                            <?php
+                                        }else{  ?>
+
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                            <?php
+                                        }
+                                        ?>
+                                    </td>
+                                    <?php if($this->ses_role==1) { ?>
+                                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['company_name'],$idd); ?></td>
+                                    <?php } ?>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_from'])),$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_to'])),$idd); ?></td>
+                                    <td>
+                                        <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                    </td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_task_name'],$idd); ?></td>
+                                    <td>
+                                        <?php
+                                        $driver = $v['driver_task_name']=='Delivery'
+                                        ||$v['driver_task_name']=='Driver'
+                                            ? $v['assigned_driver_1_id_name']
+                                            : $v['assigned_driver_2_id_name'];
+                                        print $this->ob_LoginAuth->set_excel_values($driver,$idd);
+                                        ?>
+                                    </td><td> <?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?> </td>
+                                    <?php
+                                    if( $this->ob_LoginAuth->chk_menu_permission('Request_Approve')
+                                        || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                                    {
+                                        ?>
+                                        <td>
+                                            <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Approve')) {?>
+                                                <a href="javascript:void(0)" class="" onclick="window.location='/Request/manage/idd/<?php echo $idd;?>/status/2'">Approve</a>
+                                            <?php } ?>
+                                            &nbsp;&nbsp;
+                                            <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Reject')) {?>
+                                                <a href="javascript:void(0)" class="" onclick="window.location='/Request/manage/idd/<?php echo $idd;?>/status/3'">Reject</a>
+                                            <?php } ?>
+
+                                        </td>
+                                        <?php
+                                    }
+                                    ?>
+                                </tr>
+                                <?php $sl++;
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+                    <?php }else{ ?>
+                    <h2 class="sub-title">For Assignment:
+                       <span class="pull-right custom_track_padding_b">
+<!--                            <a href="#" class="btn btn-default">Manage categories</a>-->
+                            <a href="/Download/listexporttoexcelall/export_id/1/tab_id/1" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                    </h2>
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th>#</th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?><?php print $this->page_sorting_images['company']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Schedule');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Total Due');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                            <th>Assignments</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $sl = 1;
+                        if(count($this->TD_assignment_rows))
+                        {
+                            foreach($this->TD_assignment_rows as $k=>$v)
+                            {
+                                $idd=$k;
+                                ?>
+                                <tr>
+                                    <td><?php print $sl; ?></td>
+                                    <td>
+                                        <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                            <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                                <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                            </a>
+                                        <?php } else { ?>
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                    </td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['rent_from'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['estimated_price'],$idd); ?></td>
+                                    <td><a href="javascript:void(0)" class="btn btn-default" onclick="do_popup_assignment(0,<?php echo $idd;?>);" data-toggle="modal" data-target="#assignment">Assignment</a></td>
+                                </tr>
+                                <?php
+                                $sl++;
+                            }
+                        }
+
+                        ?>
+                        </tbody>
+                    </table>
+                    <?php } ?>
+
+
+
+                    <div class="spacer"></div>
+                    <h2 class="sub-title">Ongoing:
+                       <span class="pull-right custom_track_padding_b">
+                            <a href="#" class="btn btn-default" style="cursor : default;"><?php print $tot_outst ?  number_format($tot_outst, 2, '.', ','): '0.00'; ?></a>
+                            <a href="/Download/listexporttoexcelall/export_id/2/tab_id/1" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                    </h2>
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th>#</th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?><?php print $this->page_sorting_images['company']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Rent to');?><?php print $this->page_sorting_images['rent_to']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Amount Due');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Confirm');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $sl = 1;
+                        if(count($this->TD_duepay_rows))
+                        {
+                            foreach($this->TD_duepay_rows as $k=>$v)
+                            {
+                                $idd=$k;
+                                ?>
+                                <tr>
+                                    <td><?php print $sl; ?></td>
+                                    <td>
+                                        <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                            <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                                <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                            </a>
+                                        <?php } else { ?>
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                    </td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_to'])),$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['estimated_price'] ? number_format($v['estimated_price'], 2, '.', ',') : '',$idd); ?></td>
+                                    <td>
+                                    <?php if($v['driver_status_id']==8) { ?>
+                                        <a class="btn btn-default" style="cursor : default;">Collected</a>
+                                    <?php } else { ?>
+                                        <a href="javascript:void(0)" class="btn btn-default" onclick="do_popup(0,<?php echo $idd;?>,<?php echo $v['estimated_price'];?>);" data-toggle="modal" data-target="#duePay">Collect</a>
+                                        <!--<a href="/Dashboard/updatestatus/updateid/<?php /*echo $idd;*/?>" class="btn btn-default" >Collect</a>-->
+                                    <?php } ?>
+                                    </td>
+                                </tr>
+                                <?php
+                                $sl++;
+                            }
+                        }
+
+
+                        ?>
+                        </tbody>
+
+                    </table>
+
+
+                    <div class="spacer"></div>
+                    <h2 class="sub-title">Remitted:
+                       <span class="pull-right custom_track_padding_b">
+                            <a href="#" class="btn btn-default" style="cursor : default;"><?php print $tot_outs_rem ? number_format($tot_outs_rem, 2, '.', ','): '0.00'; ?></a>
+                            <a href="/Download/listexporttoexcelall/export_id/3/tab_id/1" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                    </h2>
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th>#</th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Details');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Remitted');?><?php print $this->page_sorting_images['recieved_amount']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Received By');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Received On');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        </tr>
+                        </thead>
+                        
+                        <tbody>
+                        <?php
+                        $sl = 1;
+                        if(count($this->TD_remitted_rows))
+                        {
+                            foreach($this->TD_remitted_rows as $k=>$v)
+                            {
+                                $idd=$k;
+                                ?>
+                                <tr>
+                                    <td><?php print $sl; ?></td>
+                                    <td>
+                                        <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                            <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                                <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                            </a>
+                                        <?php } else { ?>
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['recieved_amount'] ? number_format($v['recieved_amount'], 2, '.', ',') : '',$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['nick_name'],$idd); ?></td>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['received_on'],$idd); ?></td>
+                                </tr>
+                                <?php
+                                $sl++;
+                            }
+                        }
+
+                        ?>
+                        </tbody>
+                    </table>
+                     
+                     
+
+
+                </div>
+                <div class="tab-pane <?php if($this->tabshow==2) { ?>active<?php } ?>" id="tab2">
+                <div class="spacer"></div>
+
+                <?php if($this->role==2) { ?>
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?></th>
+                            <?php if($this->ses_role==1) { ?>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Company');?></th>
+                            <?php } ?>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('From');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('To');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Task');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Customer');?></th>
+                            <?php
+                            if( $this->ob_LoginAuth->chk_menu_permission('Request_Approve')
+                                || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                            {
+                                ?>
+                                <th>Manage</th>
+                                <?php
+                            }
+                            ?>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $sl = 1;
+                        foreach($this->MTD_approved_rows as $k=>$v)
+                        {
+                            $idd=$v['request_id'];
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                    if($this->ob_LoginAuth->chk_menu_permission('Request_Details'))
+                                    {
+                                        ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id'];?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                        </a>
+                                        <?php
+                                    }else{  ?>
+
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                        <?php
+                                    }
+                                    ?>
+                                </td>
+                                <?php if($this->ses_role==1) { ?>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['company_name'],$idd); ?></td>
+                                <?php } ?>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_from'])),$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_to'])),$idd); ?></td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_task_name'],$idd); ?></td>
+                                <td>
+                                    <?php
+                                    $driver = $v['driver_task_name']=='Delivery'
+                                    ||$v['driver_task_name']=='Driver'
+                                        ? $v['assigned_driver_1_id_name']
+                                        : $v['assigned_driver_2_id_name'];
+                                    print $this->ob_LoginAuth->set_excel_values($driver,$idd);
+                                    ?>
+                                </td><td> <?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?> </td>
+                                <?php
+                                if( $this->ob_LoginAuth->chk_menu_permission('Request_Approve')
+                                    || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                                {
+                                    ?>
+                                    <td>
+                                        <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Approve')) {?>
+                                            <a href="javascript:void(0)" class="" onclick="window.location='/Request/manage/idd/<?php echo $idd;?>/status/2'" >Approve</a>
+                                        <?php } ?>
+                                        &nbsp;&nbsp;
+                                        <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Reject')) {?>
+                                            <a href="javascript:void(0)" class="" onclick="window.location='/Request/manage/idd/<?php echo $idd;?>/status/3'" >Reject</a>
+                                        <?php } ?>
+
+                                    </td>
+                                    <?php
+                                }
+                                ?>
+                            </tr>
+                            <?php $sl++;
+                        }
+                        ?>
+                        </tbody>
+                    </table>
+                <?php }else{ ?>
+                <h2 class="sub-title">For Assignment
+                       <span class="pull-right custom_track_padding_b">
+<!--                            <a href="#" class="btn btn-default">Manage categories</a>-->
+                            <a href="/Download/listexporttoexcelall/export_id/1/tab_id/2" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                </h2>
+                <table class="table-full center" data-tablesaw-mode="stack">
+                    <thead class="sortable">
+                    <tr>
+                        <th>#</th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?><?php print $this->page_sorting_images['company']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Schedule');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Total Due');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th>Assignments</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sl = 1;
+                    if(count($this->MTD_assignment_rows))
+                    {
+                        foreach($this->MTD_assignment_rows as $k=>$v)
+                        {
+                            $idd=$k;
+                            ?>
+                            <tr>
+                                <td><?php print $sl; ?></td>
+                                <td>
+                                    <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['rent_from'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['estimated_price'] ? number_format($v['estimated_price'], 2, '.', ',') : '',$idd); ?></td>
+                                <td><a href="javascript:void(0)" class="btn btn-default" onclick="do_popup_assignment(2,<?php echo $idd;?>);" data-toggle="modal" data-target="#assignment">Assignment</a></td>
+                            </tr>
+                            <?php
+                            $sl++;
+                        }
+                    }
+
+                    ?>
+                    </tbody>
+                </table>
+                <?php } ?>
+
+                <div class="spacer"></div>
+                <h2 class="sub-title">Overdue Payment:
+                       <span class="pull-right custom_track_padding_b">
+                            <a href="#" class="btn btn-default" style="cursor : default;"><?php print $mtot_outst ? number_format($mtot_outst, 2, '.', ',') : '0.00'; ?></a>
+                            <a href="/Download/listexporttoexcelall/export_id/2/tab_id/2" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                </h2>
+                <table class="table-full center" data-tablesaw-mode="stack">
+                    <thead class="sortable">
+                    <tr>
+                        <th>#</th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?><?php print $this->page_sorting_images['company']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Rent to');?><?php print $this->page_sorting_images['rent_to']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Amount Due');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Confirm');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sl = 1;
+                    if(count($this->MTD_duepay_rows))
+                    {
+                        foreach($this->MTD_duepay_rows as $k=>$v)
+                        {
+                            $idd=$k;
+                            ?>
+                            <tr>
+                                <td><?php print $sl; ?></td>
+                                <td>
+                                    <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_to'])),$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['estimated_price'] ? number_format($v['estimated_price'], 2, '.', ',') : '',$idd); ?></td>
+                                <td>
+                                    <?php if($v['driver_status_id']==8) { ?>
+                                        <a class="btn btn-default" style="cursor : default;">Collected</a>
+                                    <?php } else { ?>
+                                        <a href="javascript:void(0)" class="btn btn-default" onclick="do_popup(2,<?php echo $idd;?>,<?php echo $v['estimated_price'];?>);" data-toggle="modal" data-target="#duePay">Collect</a>
+                                        <!--<a href="/Dashboard/updatestatus/updateid/<?php /*echo $idd;*/?>" class="btn btn-default" >Collect</a>-->
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <?php
+                            $sl++;
+                        }
+                    }
+
+
+                    ?>
+                    </tbody>
+
+                </table>
+
+
+                <div class="spacer"></div>
+                <h2 class="sub-title">Remitted:
+                       <span class="pull-right custom_track_padding_b">
+                            <a href="#" class="btn btn-default" style="cursor : default;"><?php print $mtot_outs_rem ? number_format($mtot_outs_rem, 2, '.', ','):'0.00'; ?></a>
+                            <a href="/Download/listexporttoexcelall/export_id/3/tab_id/2" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                </h2>
+                <table class="table-full center" data-tablesaw-mode="stack">
+                    <thead class="sortable">
+                    <tr>
+                        <th>#</th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Details');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Remitted');?><?php print $this->page_sorting_images['recieved_amount']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Received By');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Received On');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sl = 1;
+                    if(count($this->MTD_remitted_rows))
+                    {
+                        foreach($this->MTD_remitted_rows as $k=>$v)
+                        {
+                            $idd=$k;
+                            ?>
+                            <tr>
+                                <td><?php print $sl; ?></td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td>
+                                    <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                    <?php } ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['recieved_amount'] ? number_format($v['recieved_amount'], 2, '.', ',') : '',$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['nick_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['received_on'],$idd); ?></td>
+                            </tr>
+                            <?php
+                            $sl++;
+                        }
+                    }
+
+                    ?>
+                    </tbody>
+                </table>
+                </div>
+                <div class="tab-pane <?php if($this->tabshow==3) { ?>active<?php } ?>" id="tab3">
+                <div class="spacer"></div>
+                <?php if($this->role==2) { ?>
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?></th>
+                            <?php if($this->ses_role==1) { ?>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Company');?></th>
+                            <?php } ?>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('From');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('To');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Task');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?></th>
+                            <th><?php print $this->ob_LoginAuth->set_excel_header('Customer');?></th>
+                            <?php
+                            if( $this->ob_LoginAuth->chk_menu_permission('Request_Approve')
+                                || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                            {
+                                ?>
+                                <th>Manage</th>
+                                <?php
+                            }
+                            ?>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $sl = 1;
+                        foreach($this->YTD_approved_rows as $k=>$v)
+                        {
+                            $idd=$v['request_id'];
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                    if($this->ob_LoginAuth->chk_menu_permission('Request_Details'))
+                                    {
+                                        ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id'];?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                        </a>
+                                        <?php
+                                    }else{  ?>
+
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'],$idd); ?>
+                                        <?php
+                                    }
+                                    ?>
+                                </td>
+                                <?php if($this->ses_role==1) { ?>
+                                    <td><?php print $this->ob_LoginAuth->set_excel_values($v['company_name'],$idd); ?></td>
+                                <?php } ?>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_from'])),$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_to'])),$idd); ?></td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_task_name'],$idd); ?></td>
+                                <td>
+                                    <?php
+                                    $driver = $v['driver_task_name']=='Delivery'
+                                    ||$v['driver_task_name']=='Driver'
+                                        ? $v['assigned_driver_1_id_name']
+                                        : $v['assigned_driver_2_id_name'];
+                                    print $this->ob_LoginAuth->set_excel_values($driver,$idd);
+                                    ?>
+                                </td><td> <?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?> </td>
+                                <?php
+                                if( $this->ob_LoginAuth->chk_menu_permission('Request_Approve')
+                                    || $this->ob_LoginAuth->chk_menu_permission('Request_Reject'))
+                                {
+                                    ?>
+                                    <td>
+                                        <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Approve')) {?>
+                                            <a href="javascript:void(0)" class="" onclick="window.location='/Request/manage/idd/<?php echo $idd;?>/status/2'" >Approve</a>
+                                        <?php } ?>
+                                        &nbsp;&nbsp;
+                                        <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Reject')) {?>
+                                            <a href="javascript:void(0)" class="" onclick="window.location='/Request/manage/idd/<?php echo $idd;?>/status/3'" >Reject</a>
+                                        <?php } ?>
+
+                                    </td>
+                                    <?php
+                                }
+                                ?>
+                            </tr>
+                            <?php $sl++;
+                        }
+                        ?>
+                        </tbody>
+                    </table>
+                <?php }else{ ?>
+                <h2 class="sub-title">For Assignment
+                       <span class="pull-right custom_track_padding_b">
+<!--                            <a href="#" class="btn btn-default">Manage categories</a>-->
+                            <a href="/Download/listexporttoexcelall/export_id/1/tab_id/3" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                </h2>
+                <table class="table-full center" data-tablesaw-mode="stack">
+                    <thead class="sortable">
+                    <tr>
+                        <th>#</th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?><?php print $this->page_sorting_images['company']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Schedule');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Total Due');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th>Assignments</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sl = 1;
+                    if(count($this->YTD_assignment_rows))
+                    {
+                        foreach($this->YTD_assignment_rows as $k=>$v)
+                        {
+                            $idd=$k;
+                            ?>
+                            <tr>
+                                <td><?php print $sl; ?></td>
+                                <td>
+                                    <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['rent_from'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['estimated_price'] ? number_format($v['estimated_price'], 2, '.', ',') : '',$idd); ?></td>
+                                <td><a href="javascript:void(0)" class="btn btn-default" onclick="do_popup_assignment(3,<?php echo $idd;?>);" data-toggle="modal" data-target="#assignment">Assignment</a></td>
+                            </tr>
+                            <?php
+                            $sl++;
+                        }
+                    }
+
+                    ?>
+                    </tbody>
+                </table>
+                <?php } ?>
+
+                <div class="spacer"></div>
+                <h2 class="sub-title">Overdue Payment:
+                       <span class="pull-right custom_track_padding_b">
+                            <a href="#" class="btn btn-default" style="cursor : default;"><?php print $ytot_outst ? number_format($ytot_outst, 2, '.', ','): '0.00'; ?></a>
+                            <a href="/Download/listexporttoexcelall/export_id/2/tab_id/3" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                </h2>
+                <table class="table-full center" data-tablesaw-mode="stack">
+                    <thead class="sortable">
+                    <tr>
+                        <th>#</th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('ID');?><?php print $this->page_sorting_images['company']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Rent to');?><?php print $this->page_sorting_images['rent_to']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Amount Due');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Confirm');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sl = 1;
+                    if(count($this->YTD_duepay_rows))
+                    {
+                        foreach($this->YTD_duepay_rows as $k=>$v)
+                        {
+                            $idd=$k;
+                            ?>
+                            <tr>
+                                <td><?php print $sl; ?></td>
+                                <td>
+                                    <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['rent_to'])),$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['estimated_price']?number_format($v['estimated_price'], 2, '.', ',') : '' ,$idd); ?></td>
+                                <td>
+                                    <?php if($v['driver_status_id']==8) { ?>
+                                        <a class="btn btn-default" style="cursor : default;">Collected</a>
+                                    <?php } else { ?>
+                                        <a href="javascript:void(0)" class="btn btn-default" onclick="do_popup(3,<?php echo $idd;?>,<?php echo $v['estimated_price'];?>);" data-toggle="modal" data-target="#duePay">Collect</a>
+                                        <!--<a href="/Dashboard/updatestatus/updateid/<?php /*echo $idd;*/?>" class="btn btn-default" >Collect</a>-->
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <?php
+                            $sl++;
+                        }
+                    }
+
+
+                    ?>
+                    </tbody>
+
+                </table>
+
+
+                <div class="spacer"></div>
+                <h2 class="sub-title">Remitted:
+                       <span class="pull-right custom_track_padding_b">
+                            <a href="#" class="btn btn-default" style="cursor : default;"><?php print $ytot_outs_rem ? number_format($ytot_outs_rem, 2, '.', ',') : '0.00'; ?></a>
+                            <a href="/Download/listexporttoexcelall/export_id/3/tab_id/3" class="btn btn-default">Export To EXCEL</a>
+                        </span>
+                </h2>
+                <table class="table-full center" data-tablesaw-mode="stack">
+                    <thead class="sortable">
+                    <tr>
+                        <th>#</th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Vehicle');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Details');?><?php print $this->page_sorting_images['package_name']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Remitted Amount');?><?php print $this->page_sorting_images['recieved_amount']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Received By');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Received On');?><?php print $this->page_sorting_images['car_type']; ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $sl = 1;
+                    if(count($this->YTD_remitted_rows))
+                    {
+                        foreach($this->YTD_remitted_rows as $k=>$v)
+                        {
+                            $idd=$k;
+                            ?>
+                            <tr>
+                                <td><?php print $sl; ?></td>
+                                <td>
+                                    <a href="/Vehicles/details/idd/<?php echo $v['vehicle_id'];?>/view/list"><?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'],$idd); ?>
+                                </td>
+                                <td>
+                                    <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) { ?>
+                                        <a href="/Request/details/idd/<?php echo $v['request_id']; ?>">
+                                            <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        <?php print $this->ob_LoginAuth->set_excel_values($v['req_gen_id'], $idd); ?>
+                                    <?php } ?>
+                                </td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['driver_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['recieved_amount'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['nick_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['received_on'],$idd); ?></td>
+                            </tr>
+                            <?php
+                            $sl++;
+                        }
+                    }
+
+                    ?>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript">
+    //change_tab('TD');
+</script>
+
+
+<div id="duePay" class="modal fade" role="dialog">
+    <form class="default-form" action="/Dashboard/updatestatus" method="post" onsubmit="return validate1();">
+        <input type="hidden" name="updateid" id="updateid" value="">
+        <input type="hidden" name="tabs" id="tabs" value="">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="modal-header"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="uid">Due Amount: <br></label>
+                        <div class="input-container">
+                            <p id="due_amount">dsdsds</p>
+                            <input type="hidden" value="" id="due_amount1">
+                            <span class="error" id="err_recieved_amount">&nbsp;</span>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="uid">Remitted Amount: <br></label>
+                        <div class="input-container">
+                            <input class="form-control" type="text" placeholder="Remitted Amount" name="recieved_amount" id="recieved_amount" value="">
+                            <span class="error" id="err_remmited_amount">&nbsp;</span>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="uid">Remarks: <br></label>
+                        <div class="input-container">
+                            <textarea class="form-control" placeholder="Remarks" id="recieved_remarks" name="recieved_remarks"></textarea>
+                            <span class="error" id="err_recieved_remarks">&nbsp;</span>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-green" id="btn_oth">Submit</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+    <script>
+        function validate1()
+        {
+            var recieved_amount = $("#recieved_amount").val().trim()*1;
+            var due_amount1 = $("#due_amount1").val().trim()*1;
+            var recieved_remarks = $("#recieved_remarks").val().trim();
+            var error = '';
+
+            if(recieved_amount > 0)
+            {
+                $("#err_remmited_amount").html('&nbsp;');
+                if(recieved_amount < due_amount1){
+                    if(!recieved_remarks)
+                    {
+                        error += '1';
+                        $("#err_recieved_remarks").html('Please add remarks');
+                    }else{
+                        $("#err_recieved_remarks").html('&nbsp;');
+                    }
+                }else if(recieved_amount > due_amount1){
+                    error += '2';
+                    $("#err_recieved_remarks").html('&nbsp;');
+                    $("#err_remmited_amount").html('Remitted Amount must not be greater that Due Amount !');
+                }else{
+                    $("#err_recieved_remarks").html('&nbsp;');
+                    $("#err_remmited_amount").html('&nbsp;');
+                }
+            }else{
+                error += '3';
+                $("#err_remmited_amount").html('Please add Remitted Amount');
+            }
+
+            if(error)
+            return false;
+        }
+    </script>
+</div>
+
+<div id="assignment" class="modal fade" role="dialog">
+    <form class="default-form" action="/Dashboard/managerequest" method="post">
+        <input type="hidden" name="idd" id="req_idd" value="">
+        <input type="hidden" name="tab" id="tab" value="">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="modal-header"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="pass2" class="control-label">Driver Task <span class="red">*</span><span class="smalltext required"></label>
+                        <div class="input-container">
+                            <select name="driver_task_id" id="driver_task_id" onchange="change_validate(this.value)">
+                                <option value="">Select</option>
+                                <?php foreach($this->driverTaskList as $k=>$v){?>
+                                    <option value="<?php echo $v['driver_task_id']; ?>"><?php echo $v['driver_task_name']; ?></option>
+                                <?php }?>
+                            </select>
+                            <span class="error" id="err_driver_task_id">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pass2" class="control-label">Vehicle <span class="smalltext required"></label>
+                        <div class="input-container">
+                            <select name="rental_id" id="rental_id">
+                                <?php foreach($this->assignedVehicleList as $k=>$v){?>
+                                    <option value="<?php echo $v['rental_id']; ?>" ><?php echo $v['assigned_vehicle_name']; ?></option>
+                                <?php }?>
+
+                            </select>
+                            <span class="error" id="err_rental_id">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="form-group dtd">
+                        <label for="uid">Delivery Address: <span class="red" id="delivery_address_star">*</span><br></label>
+                        <div class="input-container">
+                            <textarea class="form-control" placeholder="Delivery Address" id="delivery_address"  name="delivery_address"></textarea>
+                            <span class="error" id="err_delivery_address">&nbsp;</span>
+
+                        </div>
+                    </div>
+                    <div class="form-group dtd">
+                        <label for="uid">Assigned Driver 1: <span class="red" id="assigned_driver1_star">*</span><br></label>
+                        <div class="input-container">
+                            <select id="assigned_driver_1_id"  name="assigned_driver_1_id">
+                                <?php foreach($this->driverList as $k=>$v){?>
+                                    <option value="<?php echo $v['user_id']; ?>"  ><?php echo $v['user_full_name']; ?></option>
+                                <?php }?>
+
+                            </select>
+
+                            <span class="error" id="err_assigned_driver_1_id">&nbsp;</span>
+
+                        </div>
+                    </div>
+                    <div class="form-group dtp">
+                        <label for="uid">Pickup Address: <span class="red" id="pickup_address_star">*</span><br></label>
+                        <div class="input-container">
+                            <textarea class="form-control" placeholder="Pickup Address" id="pickup_address"  name="pickup_address"></textarea>
+                            <span class="error" id="err_pickup_address">&nbsp;</span>
+
+                        </div>
+                    </div>
+                    <div class="form-group dtp">
+                        <label for="uid">Assigned Driver 2: <span class="red" id="assigned_driver2_star">*</span><br></label>
+                        <div class="input-container">
+                            <select id="assigned_driver_2_id"  name="assigned_driver_2_id">
+                                <?php foreach($this->driverList as $k=>$v){?>
+                                    <option value="<?php echo $v['user_id']; ?>"
+                                        <?php if($v['user_id']==$this->request_detail['assigned_driver_2_id']){ echo 'selected';} ?>><?php echo $v['user_full_name']; ?></option>
+                                <?php }?>
+
+                            </select>
+
+                            <span class="error" id="err_assigned_driver_2_id">&nbsp;</span>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-green" id="btn_oth">Submit</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>

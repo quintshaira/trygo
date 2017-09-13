@@ -1,0 +1,174 @@
+<?php
+$user_details=$this->user_rows;
+?>
+<script src="<?php echo $this->site_asset ;?>js/defined_list_fucntions.js"></script>
+<script type="application/javascript">
+    function check_sub()
+    {
+        //alert('all done');return false;
+    }
+    function del_row(idd,nnme)
+    {
+        if(confirm('Are You Sure to Delete user ('+nnme+')'))
+        {
+            $("#del_id").val(idd);
+            $("#search_form").submit();
+        }
+    }
+    function active_row(idd,nnme,ttype)
+    {
+        var sstr=(ttype*1)?"Un-lock":"Lock";
+        if(confirm('Are You Sure to '+sstr+' user ('+nnme+')'))
+        {
+            $("#act_id").val(idd);
+            $("#act_type").val(ttype);
+            $("#search_form").submit();
+        }
+    }
+
+    function del_con_checkit()
+    {
+        var valid = '';
+        var val = [];
+        $(':checkbox:checked').each(function(i){
+            val[i] = $(this).val();
+        });
+
+        if(confirm("Are you sure you want to delete?"))
+        {
+            $.ajax({
+                type: 'POST',
+                url: "/request/mutideleterequest/",
+                data: { del_ids: val }
+            }).done(function(data) {
+
+                window.location = '/Request/list'
+
+            });
+
+        }else{
+            alert("Canceled");
+        }
+    }
+	
+	
+	
+	
+</script>
+<div class="content-wrapper">
+    
+    <div class="">
+        <h2 class="heading bold">List Customers</h2>
+    </div>
+    
+	
+	<div class="content-main full">
+					<div class="team-title">
+						<div class="block">
+                            <?php if($this->ob_LoginAuth->chk_menu_permission('Add_Customer')){?>
+							    <button class="md-font btn-green" onclick="window.location='/customer/manage'"><i class="fa fa-bell"></i> Add Customer</button>
+                            <?php } ?>
+							<?php /*if($this->ob_LoginAuth->chk_menu_permission('Delete_Customer')){ */?><!--
+							    <button class="md-font btn-red" id="delbtn" onclick="del_con_checkit();"><i class="fa fa-trash"></i> Delete</button>
+							--><?php /*} */?>
+							<?php if($this->ob_LoginAuth->chk_menu_permission('Import_Vehicles')){ ?>
+							    <button class="md-font btn-grey" onclick="window.location=''" disabled><i class="fa fa-arrow-circle-up"></i> Import</button>
+							<?php } ?>
+							<?php if($this->ob_LoginAuth->chk_menu_permission('Export_Vehicles')){ ?>
+							    <button class="md-font btn-grey" onclick="window.location='/Download/listexporttoexcel/export_id/19'" ><i class="fa fa-arrow-circle-down"></i> Export</button>
+							<?php } ?>
+						</div>
+						<form class="search" id="search_form" action="" method="post" onsubmit="return check_sub();">
+                            <input type="hidden" id="hide_del1" name="hide_del1" >
+                            <input type="hidden" value="<?php print $this->num_row; ?>" id="num_row" name="num_row">
+                            <input type="hidden" value="<?php print $this->page; ?>" id="page" name="page">
+                            <input type="hidden" value="<?php print $order_col=$this->order_col; ?>" id="order_col" name="order_col">
+                            <input type="hidden" value="<?php print $order_typ=$this->order_typ; ?>" id="order_typ" name="order_typ">
+                            <input type="hidden" id="del_con_global" name="del_con_global" value=""/>
+                            <input type="text" placeholder="Search" name="quick_search" onKeyPress="do_quick_search(event, this.value);" 
+							value="<?php print $this->quick_search; ?>">
+						</form>
+					</div>
+
+				
+					<table class="table-full" data-tablesaw-mode="stack">
+						<thead class="sortable">
+							<tr>
+								<th><input type="checkbox" id="selecctall"></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Company');?><?php print $this->page_sorting_images['company_name']; ?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Name');?><?php print $this->page_sorting_images['customer_name']; ?></th>
+                                <th><?php print $this->ob_LoginAuth->set_excel_header('Contact number');?><?php print $this->page_sorting_images['contact_number']; ?></th>
+								<th><?php print $this->ob_LoginAuth->set_excel_header('Added By');?><?php print $this->page_sorting_images['added_by']; ?></th>
+								<th><?php print $this->ob_LoginAuth->set_excel_header('Add Date');?><?php print $this->page_sorting_images['add_date']; ?></th>
+								<?php
+								if( $this->ob_LoginAuth->chk_menu_permission('Edit_Customer')
+									|| $this->ob_LoginAuth->chk_menu_permission('Delete_Customer')
+                                )
+								{
+								?>
+								<th>Manage</th>
+								<?php
+								}
+								?>
+				 
+							
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							$sl = 1;
+							foreach($this->customer_rows as $k=>$v)
+							{
+							$idd=$v['customer_id'];
+							?>
+							<tr>
+								<td><input type="checkbox" value='<?php echo $idd;?>' name="chk[]" id="del_con_<?php echo $sl;?>" class="checkbox1"> <?php //print $idd; ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['company_name'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['customer_name'],$idd); ?></td>
+								<td><?php print $this->ob_LoginAuth->set_excel_values($v['contact_number'],$idd); ?></td>
+                                <td><?php print $this->ob_LoginAuth->set_excel_values($v['added_by_name'],$idd); ?></td>
+								<td><?php print $this->ob_LoginAuth->set_excel_values(date('M-d-Y g:i A',strtotime($v['add_date'])),$idd); ?></td>
+                                <?php
+                                if( $this->ob_LoginAuth->chk_menu_permission('Edit_Customer')
+                                || $this->ob_LoginAuth->chk_menu_permission('Delete_Customer')
+                                )
+                                {
+                                ?>
+								<td>
+                                <?php /* if($this->ob_LoginAuth->chk_menu_permission('Add_Request')) {*/?><!--
+                                    <a href="/Request/manage/rentid/<?php /*echo $idd;*/?>" >Create Request</a> &nbsp;&nbsp;
+                                --><?php /* } */?>
+								<?php if($this->ob_LoginAuth->chk_menu_permission('Edit_Customer')) {?>
+                                    <a href="/Customer/manage/idd/<?php echo $idd;?>" style="<?php echo $edit;?>">Edit</a> &nbsp;&nbsp;
+                                <?php } ?>
+								<?php if($this->ob_LoginAuth->chk_menu_permission('Delete_Customer')) {?>
+                                    <a href="/Customer/list/del_id/<?php echo $idd;?>" style="<?php echo $del;?>"  onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                                <?php } ?>
+								
+								</td>
+                                <?php
+                                }
+                                ?>
+							</tr>
+							<?php
+							$sl++;
+							}
+							?>
+			<input type="hidden" id="del_con_tcount" value="<?php echo $sl; ?>"/>				
+						</tbody>
+					</table>
+					<?php print $this->page_peginetion; ?>
+					
+					<!--<div class="content-main transparent right half">
+						<button class="btn-grey">Cancel</button>
+						<button class="btn-green">Add User</button>
+					</div>-->
+    </div>
+				</div>
+	
+	
+	
+	
+	
+	
+</div>

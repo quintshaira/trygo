@@ -1,0 +1,73 @@
+<!-- Main Area -->
+<?php
+$ret_msg=$this->ret_msg;
+$expire=$this->expire;
+?>
+
+<script type="application/javascript">
+
+
+    function checck_ppass()
+    {
+        var expire=$("#expire").val()*1;
+
+        if(!expire)
+        {
+            var ch_pass=$("#ch_pass").val().trim();
+            var ch_re_pass=$("#ch_re_pass").val().trim();
+            if(ch_pass=='')
+            {
+                $("#pass_error").html("Please give a new password");
+                //return false;
+            }
+            if(ch_pass!=ch_re_pass)
+            {
+                $("#pass_error").html("Retype Password dosen't matched");
+                //return false;
+            }
+        }
+        else
+        {
+            $("#pass_error").html('link expired');
+            //return false;
+        }
+        //alert(expire);
+        $("#pass_error").attr('class', 'alert-yellow');
+        $('#pass_error').slideDown();
+        //return false;
+    }
+</script>
+
+
+<div class="content-wrapper">
+    <div class="logo">
+        <img src="<?php print $this->site_asset; ?>img/logo-lg.png" alt="">
+    </div>
+    <form action="/index/resetchengepasssubmit" method="post" onsubmit="return checck_ppass();">
+        <input type="hidden" id="expire" name="expire" value="<?php print $expire; ?>"  />
+        <input type="hidden" id="uk" name="uk" value="<?php print $this->uk; ?>"  />
+        <input type="hidden" id="pk" name="pk" value="<?php print $this->pk; ?>"  />
+        <input type="hidden" id="email" name="email" value="<?php print $this->email; ?>"  />
+
+        <div class="login-form" id="login_div" style="display: block;">
+            <?php if($this->server_msg) { ?>
+                <div class="alert-yellow" id="login_error"><?php print $this->server_msg; ?></div>
+            <? } else { ?>
+                <div class="alert-green" id="login_error" style="display: none;"></div>
+            <?php } ?>
+            <div class="form-group">
+                <label class="form-label">New password</label>
+                <div class="input-container">
+                    <input class="input-box" type="password" <?php if($ret_msg) {print "disabled";} ?> autocomplete="off" placeholder="Enter New Password" id="ch_pass" name="ch_pass" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Re-type password</label>
+                <div class="input-container">
+                    <input class="input-box" type="password" <?php if($ret_msg) {print "disabled";} ?> autocomplete="off" placeholder="Retype New Password" id="ch_re_pass" name="ch_re_pass"  >
+                </div>
+            </div>
+            <button type="submit" class="btn-accent pull-right" <?php if($ret_msg && !$expire) {print "disabled";} ?>><?php print ($expire)?"Resend link":"Proceed";?></button>
+        </div>
+    </form>
+</div>

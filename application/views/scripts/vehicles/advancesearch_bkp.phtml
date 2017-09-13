@@ -1,0 +1,297 @@
+<script src="<?php echo $this->site_asset ;?>js/defined_list_fucntions.js"></script>
+<script type="application/javascript">
+    function callback(){
+        var didd = '';
+        check_validate_dates(didd);
+    }
+    function check_validate_dates(didd1){
+        var rent_from = $("#rent_from").val().trim();
+        var rent_to = $("#rent_to").val().trim();
+        var didd=didd1;
+        //alert(didd);
+        if(rent_from && rent_to)
+        {
+            $.ajax({
+                type: 'GET',
+                url: "/Request/checkdates/",
+                data: { rent_from: rent_from , rent_to: rent_to }
+            }).done(function(data) {
+                if(data == 2)
+                {
+                    $("#date_error").val('Y');
+                    $("#err_rent_to").html('Rent To must be equal or greater than Rent From');
+                    //$("#estimated_price").val('0');
+                }else{
+                    $("#date_error").val('N');
+                    $("#err_rent_to").html('&nbsp;');
+                }
+            });
+        }
+
+    }
+    function form_submit()
+    {
+        var error = '';
+        var rent_from = $('#rent_from').val().trim();
+        var rent_to = $('#rent_to').val().trim();
+        var date_error = $("#date_error").val();
+        $("#page").val(1);
+        if(!rent_from)
+        {
+            error += '1';
+            $('#err_rent_from').html('Rent From is Mandatory!');
+        }else{
+            $('#err_rent_from').html('&nbsp;');
+        }
+
+        if(!rent_to)
+        {
+            error += '2';
+            $('#err_rent_to').html('Rent To is Mandatory!');
+        }else{
+            $('#err_rent_to').html('&nbsp;');
+        }
+
+        if(date_error == 'Y')
+        {
+            error += '3';
+            $("#err_rent_to").html('Rent To must be equal or greater than Rent From');
+        }else{
+            $("#err_rent_to").html("&nbsp;");
+        }
+
+
+
+        if(error)
+        {
+            return false;
+        }else{
+            $("#search_form").submit();
+        }
+
+
+
+    }
+
+    function reload()
+    {
+        window.location.href='/Vehicles/advancesearch/';
+    }
+
+
+
+
+</script>
+<div class="content-wrapper">
+    <div class="">
+        <h2 class="heading bold">Advance Vehicles Search</h2>
+    </div>
+    <div class="content-main full">
+        <div class="team-title">
+        <form class="default-form" id="search_form" action="/Vehicles/advancesearch/"  method="post">
+            <input type="hidden" name="date_error" id="date_error" value="">
+            <input type="hidden" id="hide_del1" name="hide_del1" >
+            <input type="hidden" value="<?php print $this->num_row; ?>" id="num_row" name="num_row">
+            <input type="hidden" value="<?php print $this->page; ?>" id="page" name="page">
+            <input type="hidden" value="<?php print $order_col=$this->order_col; ?>" id="order_col" name="order_col">
+            <input type="hidden" value="<?php print $order_typ=$this->order_typ; ?>" id="order_typ" name="order_typ">
+            <input type="hidden" id="del_con_global" name="del_con_global" value=""/>
+        <div class="form-group">
+            <label for="pass2" class="control-label">Passengers <span class="smalltext required"></label>
+            <div class="input-container">
+                ALL
+                <!--<select name="max_passenger" id="max_passenger">
+                    <option value="">All</option>
+                    <?php /*foreach($this->vehicle_max_passenger as $k=>$v){*/?>
+                        <option value="<?php /*echo $v['max_passenger']; */?>" <?php /*echo $this->max_passenger==$v['max_passenger'] ? 'selected' : ''; */?>><?php /*echo $v['max_passenger_values']; */?></option>
+                    <?php /*}*/?>
+                </select>
+                <span class="error" id="err_max_passenger">&nbsp;</span>-->
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pass2" class="control-label">Vehicle type <span class="red">*</span><span class="smalltext required"></label>
+            <div class="input-container">
+                ALL
+                <!--<select name="vehicle_type_id" id="vehicle_type_id">
+                    <option value="">All</option>
+                    <?php /*foreach($this->vehicleTypeList as $k=>$v){*/?>
+                        <option value="<?php /*echo $v['vehicle_type_id']; */?>" <?php /*echo $this->vehicle_type_id==$v['vehicle_type_id'] ? 'selected' : ''; */?>><?php /*echo $v['vehicle_type_name']; */?></option>
+                    <?php /*}*/?>
+                </select>
+                <span class="error" id="err_vehicle_type">&nbsp;</span>-->
+            </div>
+        </div>
+            <div class="form-group">
+                <label for="pass2" class="control-label">Transmission <span class="red">*</span><span class="smalltext required"></label>
+                <div class="input-container">
+                    ALL
+                    <!--<select name="transmission_id" id="transmission_id">
+                        <option value="">All</option>
+                        <?php /*foreach($this->transmissionList as $k=>$v){*/?>
+                            <option value="<?php /*echo $v['transmission_id']; */?>" <?php /*echo $this->transmission_id==$v['transmission_id'] ? 'selected' : ''; */?>><?php /*echo $v['transmission_name']; */?></option>
+                        <?php /*}*/?>
+                    </select>
+                    <span class="error" id="err_max_passenger">&nbsp;</span>-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="uid">Rent From: <span class="red">*</span><br></label>
+                <div class="input-container">
+
+                    <div class="input-group date form_datetime col-md-8" id="rent_from_div">
+                        <input class="form-control" placeholder="Rent From" type="text" id="rent_from" name="rent_from"  onblur="chk_dates_validate()" value="<?php echo $this->rent_from ? $this->rent_from : '' ?>">
+                        <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                    </div>
+                    <span class="error" id="err_rent_from">&nbsp;</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="uid">Rent To: <span class="red">*</span><br></label>
+                <div class="input-container">
+
+                    <div class="input-group date form_datetime col-md-8" id="rent_to_div">
+                        <input class="form-control" placeholder="Rent To" type="text" id="rent_to" name="rent_to" onblur="chk_dates_validate()"  value="<?php echo $this->rent_to ? $this->rent_to : '' ?>">
+                        <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                    </div>
+
+                    <span class="error" id="err_rent_to">&nbsp;</span>
+
+                </div>
+            </div>
+
+        <div class="group">
+            <button type="button" onclick="reload();" class="btn-grey">Clear</button>
+            <button type="submit"  class="btn-green">Search</button>
+        </div>
+        </form>
+
+        </div>
+
+        <?php
+        if($this->count_print==0) {
+            ?>
+            <div class="alert alert-warning">
+                <strong>No vehicle found!</strong>
+            </div>
+            <?php
+        }
+        if($this->count_print) {
+            ?>
+            <div class="alert alert-success">
+                <strong><?php echo $this->count_rows > 1 ? $this->count_rows.' Vehicles Found': $this->count_rows.' Vehicle Found' ?></strong>
+            </div>
+            <table class="table-full" data-tablesaw-mode="stack">
+                <thead class="sortable">
+                <tr>
+                    <!--<th><input type="checkbox" id="selecctall"> #</th>-->
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Owner'); ?><?php print $this->page_sorting_images['company_id']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Plate No'); ?><?php print $this->page_sorting_images['assigned_vehicle_name']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Type'); ?><?php print $this->page_sorting_images['vehicle_type_id']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Transmission'); ?><?php print $this->page_sorting_images['transmission_id']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Model'); ?><?php print $this->page_sorting_images['model']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Year'); ?><?php print $this->page_sorting_images['year']; ?></th>
+                    <th><?php print $this->ob_LoginAuth->set_excel_header('Status'); ?><?php print $this->page_sorting_images['rental_status']; ?></th>
+                    <?php
+                    if ($this->ob_LoginAuth->chk_menu_permission('Edit_Vehicles')
+                        || $this->ob_LoginAuth->chk_menu_permission('Delete_Vehicles')
+                    ) {
+                        ?>
+                        <th>Manage</th>
+                        <?php }  ?>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $sl = 1;
+                foreach ($this->rental_rows as $k => $v) {
+                    $idd = $v['rental_id'];
+                    ?>
+                    <tr>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['company_name'], $idd); ?></td>
+                        <td>
+                            <?php
+                            if ($this->ob_LoginAuth->chk_menu_permission('Request_Details')) {
+                                ?>
+                                <a href="/Vehicles/details/idd/<?php echo $v['rental_id']; ?>/view/list">
+                                    <?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'], $idd); ?>
+                                </a>
+                                <?php
+                            } else { ?>
+
+                                <?php print $this->ob_LoginAuth->set_excel_values($v['assigned_vehicle_name'], $idd); ?>
+                                <?php
+                            }
+                            ?>
+                        </td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['vehicle_type_name'], $idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['transmission_name'], $idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['model'], $idd); ?></td>
+                        <td><?php print $this->ob_LoginAuth->set_excel_values($v['year'], $idd); ?></td>
+                        <td>
+                            <?php
+                            if ($this->ses_role != 2) {
+                                if ($v['rental_status']) { ?>
+                                   <!-- <a class="green" href="/Vehicles/list/idd/<?php /*echo $idd; */?>/status/1">
+                                        <button type="submit" class="btn-green"><?php /*print $this->ob_LoginAuth->set_excel_values('Active', $idd); */?></button>
+                                    </a>-->
+                                    <span class="green"><?php print $this->ob_LoginAuth->set_excel_values('Active', $idd); ?></span>
+                                <?php } else { ?>
+                                   <!-- <a class="red" href="/Vehicles/list/idd/<?php /*echo $idd; */?>/status/2">
+                                        <button type="submit" class="btn-red"><?php /*print $this->ob_LoginAuth->set_excel_values('Down', $idd); */?></button>
+                                    </a>-->
+                                    <span class="red"><?php print $this->ob_LoginAuth->set_excel_values('Down', $idd); ?></span>
+
+                                <?php }
+                            } else {
+                                if ($v['rental_status']) { ?>
+                                    <span class="green"><?php print $this->ob_LoginAuth->set_excel_values('Active', $idd); ?></span>
+                                <?php } else { ?>
+                                    <span class="red"><?php print $this->ob_LoginAuth->set_excel_values('Down', $idd); ?></span>
+                                <?php }
+                            }
+                            ?>
+                        </td>
+
+                        <?php
+                        if ($this->ob_LoginAuth->chk_menu_permission('Edit_Vehicles')
+                            || $this->ob_LoginAuth->chk_menu_permission('Delete_Vehicles')
+                        ) {
+                            ?>
+                            <td>
+                                <?php  if($this->ob_LoginAuth->chk_menu_permission('Add_Request')) {?>
+                                    <a href="/Request/manage/rentid/<?php echo $idd;?>" >Create Request</a> &nbsp;&nbsp;
+                                <?php  } ?>
+                                <?php if ($this->ob_LoginAuth->chk_menu_permission('Edit_Vehicles')) { ?>
+                                    <a href="/Vehicles/manage/idd/<?php echo $v['rental_id']; ?>"
+                                       style="<?php echo $edit; ?>">Edit</a> &nbsp;&nbsp;
+                                <?php } ?>
+                                <?php if ($this->ob_LoginAuth->chk_menu_permission('Delete_Vehicles')) { ?>
+                                    <a href="/Vehicles/list/del_id/<?php echo $v['rental_id']; ?>"
+                                       style="<?php echo $del; ?>"
+                                       onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                                <?php } ?>
+
+                            </td>
+                            <?php } ?>
+                    </tr>
+                    <?php
+                    $sl++; } ?>
+                <input type="hidden" id="del_con_tcount" value="<?php echo $sl; ?>"/>
+                </tbody>
+            </table>
+            <?php print $this->page_peginetion; ?>
+            <?php } ?>
+
+    </div>
+</div>
+
+
+
+
+
+
+</div>

@@ -1,0 +1,243 @@
+<link href="<?php print $this->site_asset; ?>css/event-date.css" rel="stylesheet">
+<script src="<?php print $this->site_asset; ?>js/jquery-2.1.4.min.js"></script>
+<?php
+
+error_reporting(0);
+//db details
+$dbHost = 'localhost';
+$dbUsername = 'root';
+$dbPassword = '123AsawaNiPadri';
+$dbName = 'tranzgo';
+
+//Connect and select the database
+
+//mysql_select_db("php_event_calendar",mysql_connect("localhost","root",""));
+$conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+
+
+function getAllMonths($selected = ''){
+    $options = '';
+    for($i=1;$i<=12;$i++)
+    {
+        $value = ($i < 10)?'0'.$i:$i;
+        $selectedOpt = ($value == $selected)?'selected':'';
+        $options .= '<option value="'.$value.'" '.$selectedOpt.' >'.date("F", mktime(0, 0, 0, $i+1, 0, 0)).'</option>';
+    }
+    return $options;
+}
+
+function getYearList($selected = ''){
+    $options = '';
+    for($i=2015;$i<=2025;$i++)
+    {
+        $selectedOpt = ($i == $selected)?'selected':'';
+        $options .= '<option value="'.$i.'" '.$selectedOpt.' >'.$i.'</option>';
+    }
+    return $options;
+}
+
+?>
+<div id="calendar_div">
+    <div id="calender_section">
+        <h2>
+            <div class="block">
+                <div class="col-sm-2"><a href="javascript:void(0);" onclick="getCalendar('calendar_div','<?php echo date("Y",strtotime($this->date.' - 1 Month')); ?>','<?php echo date("m",strtotime($this->date.' - 1 Month')); ?>');">&lt;&lt;</a></div>
+                <div class="col-sm-3"><select name="month_dropdown" class="month_dropdown dropdown"><?php echo getAllMonths($this->dateMonth); ?></select></div>
+                <div class="col-sm-3"><select name="year_dropdown" class="year_dropdown dropdown"><?php echo getYearList($this->dateYear); ?></select></div>
+                <div class="col-sm-2"><a href="javascript:void(0);" onclick="getCalendar('calendar_div','<?php echo date("Y",strtotime($this->date.' + 1 Month')); ?>','<?php echo date("m",strtotime($this->date.' + 1 Month')); ?>');">&gt;&gt;</a></div>
+            </div>
+        </h2>
+        <div id="event_list_show">
+
+            <table class="table-full" data-tablesaw-mode="stack">
+                <thead class="sortable">
+                <tr>
+                    <th>Schedule From</th>
+                    <th>Schedule To</th>
+                    <th>Task</th>
+                    <th>Driver</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody id="get_tbd">
+
+                </tbody>
+            </table>
+        </div>
+        <div id="calender_section_top">
+            <ul>
+                <li>Sun</li>
+                <li>Mon</li>
+                <li>Tue</li>
+                <li>Wed</li>
+                <li>Thu</li>
+                <li>Fri</li>
+                <li>Sat</li>
+            </ul>
+        </div>
+        <div id="calender_section_bot">
+            <ul>
+                <?php
+                $dayCount = 1;
+                for($cb=1;$cb<=$this->boxDisplay;$cb++){
+                    if(($cb >= $this->currentMonthFirstDay+1 || $this->currentMonthFirstDay == 7) && $cb <= ($this->totalDaysOfMonthDisplay)){
+                        //Current date
+                        $dayCount = sprintf("%02d", $dayCount);
+                        $currentDate = $this->dateYear.'-'.$this->dateMonth.'-'.$dayCount;
+                        $eventNum = 0;
+
+//echo "SELECT request_id,req_gen_id,rent_to FROM tranzgo_request WHERE vehicle_id='".$this->idd."' AND rent_from = '".$currentDate."' AND is_delete = 0";
+
+                        $result_from = $conn->query("SELECT request_id,req_gen_id,rent_to_date FROM tranzgo_request WHERE vehicle_id='".$this->idd."' AND rent_from_date = '".$currentDate."' AND is_delete = 0");
+                        $eventNum_from = $result_from->num_rows;
+                        $row_from = $result_from->fetch_assoc();
+                        //print_r($row_from);
+
+                        $result_to = $conn->query("SELECT request_id,req_gen_id,rent_from_date FROM tranzgo_request WHERE vehicle_id='".$this->idd."' AND rent_to_date = '".$currentDate."' AND is_delete = 0");
+                        $eventNum_to = $result_to->num_rows;
+                        $row_to = $result_to->fetch_assoc();
+
+                        $eventNum = $eventNum_from > 0 || $eventNum_to > 0 ? 1 : 0;
+
+                        $endDate 	= $row_from['rent_to_date'] ? explode('-',$row_from['rent_to_date']) :null;
+                        $startDate 	= $row_to['rent_from_date'] ? explode('-',$row_to['rent_from_date']) :null;
+
+                        $start = $startDate[2];
+                        $end =  $endDate[2];
+
+
+                        for($i=(int)$start+1;$i<(int)($end);$i++)
+                        {
+                            $dayArray[] = sprintf("%02d", $i);
+                        }
+
+
+                        if(in_array($dayCount,$dayArray))
+                        {
+                            $eventNum = 1;
+                        }
+                        $classPoint = $eventNum_from > 0 || $eventNum_to > 0 ? 'pointer' : '';
+                        $eventLink = $eventNum_from > 0 || $eventNum_to > 0 ? '<a class="anchorcolor" href="javascript:;" onclick="getEvents(\''.$currentDate.'\');">'.$dayCount.'</a>':$dayCount;
+
+
+
+                        if(strtotime($currentDate) == strtotime(date("Y-m-d"))){
+                            echo '<li date="'.$currentDate.'" class="grey date_cell">';
+                        }elseif($eventNum > 0){
+                            echo '<li date="'.$currentDate.'" class="light_sky date_cell '.$classPoint.'">';
+                        }else{
+                            echo '<li date="'.$currentDate.'" class="date_cell">';
+                        }
+
+                        //Date cell
+                        echo '<span>';
+                        echo $eventLink;
+                        echo '</span>';
+
+                        echo '</li>';
+                        $dayCount++;
+                        ?>
+                    <?php }else{ ?>
+                        <li><span>&nbsp;</span></li>
+                    <?php } } ?>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function getCalendar(target_div,year,month){
+        $.ajax({
+            type:'GET',
+            url:'/Vehicles/getcalendar1/',
+            data:'year='+year+'&month='+month+'&idd='+<?php echo $this->idd;?>,
+            success:function(html){
+                $('#'+target_div).html(html);
+            }
+        });
+    }
+
+    function getEvents(date){
+        var table = '';
+        $.ajax({
+            type:'GET',
+            url:'/Vehicles/getevents/',
+            data:'date='+date+'&idd='+<?php echo $this->idd;?>,
+            success:function(data){
+                //alert(data);
+                var t = JSON.parse(data);
+                alert(t['assigned_driver_2_name']);
+
+                table += '<tr>' ;
+                table += '<td>' ;
+                table += t['rent_from_str']?t['rent_from_str']:'N/A' ;
+                table += '</td>' ;
+
+
+                table += '<td>' ;
+                table += t['rent_to_str']?t['rent_to_str']:'N/A' ;
+                table += '</td>' ;
+
+                table += '<td>' ;
+                table += t['driver_task_name']? t['driver_task_name']:'N/A' ;
+                table += '</td>' ;
+
+                table += '<td>' ;
+                table += t['assigned_driver_1_name'] ? t['assigned_driver_1_name'] : t['assigned_driver_2_name'] ;
+                table += '</td>' ;
+
+                table += '<td>' ;
+                table += t['delivery_address']? t['delivery_address']:t['pickup_address'] ;
+                table += '</td>' ;
+
+                table += '<td>' ;
+                table += t['request_status_name']? t['request_status_name']:'N/A' ;
+                table += '</td>' ;
+
+                table += '</tr>' ;
+
+                if(t['rent_from_str']==undefined || t['rent_from_str']==null)
+                {
+                    $("#get_tbd").html("&nbsp;");
+                }else{
+                    $("#get_tbd").html(table);
+                }
+                //alert(table);
+
+                //$("#image-src").attr('src','/public/uploads/request/'+t['image_name']);
+                //$('#event_list').html(html);
+                //$('#event_list').slideDown('slow');
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        $(".date_popup_wrap").fadeOut();
+        $('.date_cell').mouseenter(function(){
+            date = $(this).attr('date');
+            $(".date_popup_wrap").fadeOut();
+            $("#date_popup_"+date).fadeIn();
+        });
+        $('.date_cell').mouseleave(function(){
+            $(".date_popup_wrap").fadeOut();
+        });
+        $('.month_dropdown').on('change',function(){
+            getCalendar('calendar_div',$('.year_dropdown').val(),$('.month_dropdown').val());
+        });
+        $('.year_dropdown').on('change',function(){
+            getCalendar('calendar_div',$('.year_dropdown').val(),$('.month_dropdown').val());
+        });
+        $(document).click(function(){
+            $('#event_list').slideUp('slow');
+        });
+    });
+
+
+
+</script>
+

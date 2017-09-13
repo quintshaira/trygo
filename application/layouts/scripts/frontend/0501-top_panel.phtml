@@ -1,0 +1,47 @@
+<div id="page-content-wrapper" class="content">
+    <div class="header-fixed">
+        <nav class="branding-menu">
+            <!--<a href="#menu-toggle" class="btn btn-default" id="menu-toggle"><i class="fa fa-bars"></i></a>-->
+            <ul>
+                <li class="sidebar-brand">
+                    <img src="<?php print $this->site_asset; ?>/img/logo.png" alt="">
+                </li>
+                <li class="sidebar-brand" id="msg_center"><?php if($this->server_msg){ print $this->server_msg; } ?></li>
+            </ul>
+
+        </nav>
+        <div class="notification">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Angeline Yap added a New User <i class="fa fa-bell"></i><span class="bubble">6</span>
+            </a>
+            <ul class="dropdown-menu right">
+                <a class="title" href="#">Notifications (3)</a>
+                <li><a href="#"><i class="fa fa-circle"></i> Angeline Yap Added a <span class="blue">New User</span></a></li>
+                <li><a href="#"><i class="fa fa-circle"></i> Carlo Ernest Fernandez modified <span class="blue">Mimi Chu's profile</span></a></li>
+                <li><a href="#"><i class="fa fa-circle"></i> <span class="blue">Measurement Quarter for Q3</span> has been created by Mimi Chu</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <script type="application/javascript">
+        function clear_msg_center(p)
+        {
+            if(p)
+            {
+                $("#msg_center").fadeOut(1000);
+            }
+            else
+            {
+                $("#msg_center").fadeOut(300);
+                $("#msg_center").fadeIn(300);
+                $("#msg_center").fadeOut(300);
+                $("#msg_center").fadeIn(300);
+                $("#msg_center").fadeOut(300);
+                $("#msg_center").fadeIn(300);
+                setTimeout('clear_msg_center(1)',5000);
+            }
+            //document.getElementById('msg_center').innerHTML="&nbsp;";
+        }
+        setTimeout('clear_msg_center(0)',10000);
+    </script>

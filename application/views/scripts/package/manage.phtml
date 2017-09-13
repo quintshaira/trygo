@@ -1,0 +1,373 @@
+<script type="application/javascript">
+
+    function sub_check()
+    {
+        var idd = $("#idd").val().trim();
+        var package_name = $("#package_name").val().trim();
+        var vehicle_type_id = $("#vehicle_type_id").val().trim();
+        var driver_type_id = $("#driver_type_id").val().trim();
+        var transmission_id = $("#transmission_id").val().trim();
+        var request_rate_id = $("#request_rate_id").val().trim();
+        var price = $("#price").val().trim();
+
+        var pkg_exist = $("#pkg_exist").val();
+
+        var err_vl="";
+
+
+        if(!package_name)
+        {
+            err_vl+="1";
+            $("#err_package_name").html("Package name is Mandatory");
+        }else{
+            $("#err_package_name").html("&nbsp;");
+        }
+
+        if(pkg_exist=='1')
+        {
+            err_vl+="2";
+            $("#err_package_name").html("This Package already exist");
+        }else{
+            $("#err_package_name").html("&nbsp;");
+        }
+
+
+        if(!vehicle_type_id)
+        {
+            err_vl+="3";
+            $("#err_vehicle_type_id").html("Vehicle Type is Mandatory");
+        }else{
+            $("#err_vehicle_type_id").html("&nbsp;");
+        }
+
+        if(!driver_type_id)
+        {
+            err_vl+="4";
+            $("#err_driver_type_id").html("Driver Type is Mandatory");
+        }else{
+            $("#err_driver_type_id").html("&nbsp;");
+        }
+
+        if(!transmission_id)
+        {
+            err_vl+="5";
+            $("#err_transmission_id").html("Transmission is Mandatory");
+        }else{
+            $("#err_transmission_id").html("&nbsp;");
+        }
+
+        if(!request_rate_id)
+        {
+            err_vl+="6";
+            $("#err_request_rate_id").html("Frequency is Mandatory");
+        }else{
+            $("#err_request_rate_id").html("&nbsp;");
+        }
+
+        if(!price)
+        {
+            err_vl+="7";
+            $("#err_price").html("Frequency Price  is Mandatory");
+        }else{
+            $("#err_price").html("&nbsp;");
+        }
+
+
+        if(err_vl!="")
+        {return false;}
+
+    }
+
+
+    function check_package_name(value)
+    {
+        var idd = $("#idd").val().trim();
+        $.ajax({
+            type: 'GET',
+            url: "/Package/checkpackagename/",
+            data: { Package_name: value , idd: idd }
+        }).done(function(data) {
+                if(data > 0)
+                {
+                    $("#pkg_exist").val('1');
+                    $("#err_package_name").html('This Package already exist');
+                }else{
+                    $("#pkg_exist").val('0');
+                    $("#err_package_name").html('&nbsp;');
+                }
+            });
+    }
+
+    function do_popup(value,fullvalue)
+    {
+        $("#othertypes").val(value);
+        $("#lbl_id").html('Add New '+fullvalue);
+        $("#plc").html('Add New '+fullvalue);
+        $("#btn_oth").html('Add New '+fullvalue);
+
+    }
+
+    function check_format(value)
+    {
+        $("#price").val(currency_format1(value));
+        var price  = $("#price").val() || '';
+        if(price)
+        {
+            $("#price_num").val(currency_format(price*1));
+        }else{
+            $("#price_num").val(currency_format(value*1));
+        }
+
+
+        //var price = $("#price").val(value);
+
+        //$("#price").val(value);
+    }
+
+    function currency_format(n) {
+        return n.toFixed(2).replace(/./g, function(c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+        });
+    }
+
+    function currency_format1(value) {
+        return parseFloat(value.replace(/,/g, ''));
+    }
+
+
+
+
+</script>
+<div class="content-wrapper">
+    <h2 class="heading"><?php echo $this->package_detail['package_id'] ? 'Update Package' : 'Add a New Package' ?></h2>
+    <div class="content-main full">
+
+        <div id="myModal" class="modal fade" role="dialog">
+            <form class="default-form" action="/Other/submit" method="post">
+                <input type="hidden" name="othertypes" id="othertypes" value="">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal-header"></h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="control-label" id="lbl_id"></label>
+                                <div class="input-container-half">
+                                    <input type="text" placeholder="" id="plc" name="txt_value">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-green" id="btn_oth">Add</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+
+        <form class="default-form" action="/Package/submitpackage/" onsubmit="return sub_check();" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="idd" id="idd" value="<?php echo $this->package_detail['package_id'] ? $this->package_detail['package_id'] : '' ?>">
+        <input type="hidden" name="pkg_exist" id="pkg_exist" value="">
+        <input type="hidden" name="price" id="price" value="">
+
+            <div class="form-group">
+                <label class="control-label">Package name <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <input placeholder="Package name" type="text" name="package_name" id="package_name" onblur="check_package_name(this.value)" value="<?php echo $this->package_detail['package_name'] ? $this->package_detail['package_name'] : ''; ?>">
+                    <span class="error" id="err_package_name">&nbsp;</span>
+                </div>
+
+            </div>
+
+        <?php if($_SESSION['tranzgo_session']['account_id']==1) { ?>
+            <div class="form-group">
+                <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <select name="company_id" id="company_id">
+                        <option value="">Select</option>
+                        <?php foreach($this->companyList as $k=>$v){?>
+                            <option value="<?php echo $v['company_id']; ?>"
+                                <?php if($v['company_id']==$this->package_detail['company_id']){ echo 'selected';} ?>><?php echo $v['company_name']; ?></option>
+                        <?php }?>
+                    </select>
+                    <span class="error" id="err_company_id">&nbsp;</span>
+                </div>
+            </div>
+        <?php }else {  ?>
+            <div class="form-group">
+                <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <select name="company_id" id="company_id">
+                        <option value="<?php echo $this->getCompanyBySessId['company_id']; ?>"><?php echo $this->getCompanyBySessId['company_name']; ?></option>
+                    </select>
+                    <span class="error" id="err_company_id">&nbsp;</span>
+                </div>
+            </div>
+        <?php  } ?>
+
+            <div class="form-group">
+                <label class="control-label">Vehicle Type <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <select name="vehicle_type_id" id="vehicle_type_id">
+                        <option value="">Select</option>
+                        <?php foreach($this->carTypeList as $k=>$v){?>
+                            <option value="<?php echo $v['vehicle_type_id']; ?>"
+                                <?php if($v['vehicle_type_id']==$this->package_detail['vehicle_type_id']){ echo 'selected';} ?>><?php echo $v['vehicle_type_name']; ?></option>
+                        <?php }?>
+                    </select>
+                    <span class="error" id="err_vehicle_type_id">&nbsp;</span>
+                </div>
+                <div class="input-container-half">
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('Add_Car_Type')){ ?>
+                        <a href="javascript:void(0)" onclick="do_popup('CT','Car Type');" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    <?php } ?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('List_Car_Type')){ ?>
+                        <!--<a href="/Other/car"><i class="fa fa-list" aria-hidden="true"></i></a>-->
+                    <?php } ?>
+
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label">Driver Type <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <select name="driver_type_id" id="driver_type_id">
+                        <option value="">Select</option>
+                        <?php foreach($this->driverTypeList as $k=>$v){?>
+                            <option value="<?php echo $v['driver_type_id']; ?>"
+                                <?php if($v['driver_type_id']==$this->package_detail['driver_type_id']){ echo 'selected';} ?>><?php echo $v['driver_type_name']; ?></option>
+                        <?php }?>
+                    </select>
+                    <span class="error" id="err_driver_type_id">&nbsp;</span>
+                </div>
+                <div class="input-container-half">
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('Add_Driver_Type')){ ?>
+                        <a href="javascript:void(0)" onclick="do_popup('DT','Driver Type');" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    <?php } ?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('List_Driver_Type')){ ?>
+                        <!--<a href="/Other/driver"><i class="fa fa-list" aria-hidden="true"></i></a>-->
+                    <?php } ?>
+
+                </div>
+            </div>
+
+            <!--<div class="form-group">
+                <label class="control-label">Item Type</label>
+                <div class="input-container-half">
+                    <select name="item_type_id" id="item_type_id">
+                        <option value="">Select</option>
+                        <?php /*foreach($this->itemTypeList as $k=>$v){*/?>
+                            <option value="<?php /*echo $v['item_type_id']; */?>"
+                                <?php /*if($v['item_type_id']==$this->package_detail['item_type_id']){ echo 'selected';} */?>><?php /*echo $v['item_type_name']; */?></option>
+                        <?php /*}*/?>
+                    </select>
+                    <span class="error" id="err_item_type_id">&nbsp;</span>
+                </div>
+                <div class="input-container-half">
+                    <?php /*if($this->ob_LoginAuth->chk_menu_permission('Add_Item_Type')){ */?>
+                        <a href="javascript:void(0)" onclick="do_popup('IT','Item Type');" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    <?php /*} */?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <?php /*if($this->ob_LoginAuth->chk_menu_permission('List_Item_Type')){ */?>
+                        <a href="/Other/item"><i class="fa fa-list" aria-hidden="true"></i></a>
+                    <?php /*} */?>
+                </div>
+            </div>-->
+
+            <div class="form-group">
+                <label class="control-label">Transmission <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <select name="transmission_id" id="transmission_id">
+                        <option value="">Select</option>
+                        <?php foreach($this->carTransmissionList as $k=>$v){?>
+                            <option value="<?php echo $v['transmission_id']; ?>"
+                                <?php if($v['transmission_id']==$this->package_detail['transmission_id']){ echo 'selected';} ?>><?php echo $v['transmission_name']; ?></option>
+                        <?php }?>
+                    </select>
+                    <span class="error" id="err_transmission_id">&nbsp;</span>
+                </div>
+                <div class="input-container-half">
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('Add_Transmission')){ ?>
+                        <a href="javascript:void(0)" onclick="do_popup('TR','Transmission');" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    <?php } ?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('List_Transmission')){ ?>
+                        <!--<a href="/Other/transmision"><i class="fa fa-list" aria-hidden="true"></i></a>-->
+                    <?php } ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Frequency <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <select name="request_rate_id" id="request_rate_id">
+                        <option value="">Select</option>
+                        <?php foreach($this->frequencyList as $k=>$v){?>
+                            <option value="<?php echo $v['request_rate_id']; ?>"
+                                <?php if($v['request_rate_id']==$this->package_detail['request_rate_id']){ echo 'selected';} ?>><?php echo $v['request_rate_name']; ?></option>
+                        <?php }?>
+                    </select>
+                    <span class="error" id="err_frequency_id">&nbsp;</span>
+                </div>
+                <div class="input-container-half">
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('Add_Frequency')){ ?>
+                        <a href="javascript:void(0)" onclick="do_popup('FR','Frequency');" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    <?php } ?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <?php if($this->ob_LoginAuth->chk_menu_permission('List_Frequency')){ ?>
+                        <!--<a href="/Other/frequency"><i class="fa fa-list" aria-hidden="true"></i></a>-->
+                    <?php } ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Frequency Price <span class="red">*</span></label>
+                <div class="input-container-half">
+                    <input placeholder="Price" type="text" name="price_num" autocomplete="off" id="price_num" onblur="check_format(this.value)" value="<?php echo $this->package_detail['price'] ? $this->package_detail['price'] : '' ?>">
+                    <span class="error" id="err_price">&nbsp;</span>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Boundary</label>
+                <div class="input-container-half">
+                    <input placeholder="Boundary" type="text" name="destination" id="destination" value="<?php echo $this->package_detail['destination'] ? $this->package_detail['destination'] : '' ?>">
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <label for="pass2" class="control-label">Status <span class="smalltext required"></label>
+                <div class="input-container-half">
+                    <select name="package_status" id="package_status">
+                        <option value="">Select</option>
+                        <option value="1" <?php  echo $this->package_detail['package_id'] ? ($this->package_detail['package_status']==1 ? 'selected' : '') : 'selected'; ?>>Active</option>
+                        <option value="0" <?php  echo $this->package_detail['package_id'] ? ($this->package_detail['package_status']==0 ? 'selected' : '') : ''; ?>>Inactive</option>
+                    </select>
+                    <span class="error" id="err_status">&nbsp;</span>
+                </div>
+            </div>
+
+
+            <div class="group">
+                <button type="button" onclick="cancel('<?php echo $this->cancel_link?>');" class="btn-grey">Cancel</button>
+                <button type="submit" class="btn-green"><?php echo $this->package_detail['package_id'] ? 'Update Package' : 'Add Package' ?></button>
+            </div>
+        </form>
+    </div>
+</div>

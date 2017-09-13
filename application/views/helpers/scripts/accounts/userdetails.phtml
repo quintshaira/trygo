@@ -1,0 +1,104 @@
+<?php
+//echo '<pre>'; print_r($this->user_detail); exit;
+?>
+<div class="content-wrapper">
+    <div class="content-sidebar transparent">
+        <div class="align-center">
+            <h2 class="title">Rent A Car</h2>
+            <h3 class="sub-title sm-font bold"><?php echo $this->user_detail['is_active'] ? 'Active' : 'Inactive'?></h3>
+        </div>
+    </div>
+    <div class="content-main transparent">
+        <h2 class="heading bold"><a href="#"><?php echo $this->user_detail['user_fname'].' '.$this->user_detail['user_lname']?></a></h2>
+        <table class="table-simple half">
+            <tr class="condense">
+                <td class="bold"><?php echo $this->user_detail['nick_name']?></td>
+                <td class="align-left"></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold"><?php echo $this->user_detail['email']?></td>
+                <td class="align-left"></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Created At</td>
+                <td class="green align-left"><?php echo date("F j, Y" ,strtotime($this->user_detail['add_date'])); ?></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Updated At </td>
+                <td class="green align-left"><?php echo date("F j, Y" ,strtotime($this->user_detail['mod_date']));?></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Verified On</td>
+                <td class="green align-left"><?php echo date("F j, Y" ,strtotime($this->user_detail['add_date']));?></td>
+            </tr>
+            <tr class="condense">
+                <td class="bold">Verified By</td>
+                <td class="green align-left"><?php echo $this->user_detail['created_by_name']?></td>
+            </tr>
+        </table>
+    </div>
+    <?php
+    if($this->user_detail['account_id']==4)
+    {
+    ?>
+    <div class="content-tabs full">
+        <div class="tabbable">
+            <div class="btns">
+                <button type="button" class="btn-white"><i class="fa fa-file-pdf-o red"></i> Export as PDF</button>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab1" data-toggle="tab">Request Assigned</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab1">
+                    <table class="table-full center" data-tablesaw-mode="stack">
+                        <thead class="sortable">
+                        <tr>
+                            <th>#</th>
+                            <th>Period</th>
+                            <th>BSC Grade</th>
+                            <th>Selected Rep</th>
+                            <th>Gross Variable Income ($)</th>
+                            <th>Percent Entitled</th>
+                            <th>Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2016 - Quarter 1 ( Jan - Mar )</td>
+                            <td class="accent bold">A</td>
+                            <td>No</td>
+                            <td>4,000</td>
+                            <td>100%</td>
+                            <td>4,000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2016 - Quarter 1 ( Jan - Mar )</td>
+                            <td class="accent bold">D</td>
+                            <td>No</td>
+                            <td>1,300</td>
+                            <td>100%</td>
+                            <td>800</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>2016 - Quarter 1 ( Jan - Mar )</td>
+                            <td class="accent bold">B</td>
+                            <td>No</td>
+                            <td>4,000</td>
+                            <td>100%</td>
+                            <td>4,000</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <?php
+    }
+    ?>
+</div>

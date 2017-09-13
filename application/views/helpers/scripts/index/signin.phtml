@@ -1,0 +1,171 @@
+<!--
+<div class="content-wrapper">
+    <h2 class="heading">Login</h2>
+    <div class="content-main full">
+        <form class="default-form" action="/index/loginauth" method="post">
+            <div class="form-group">
+                <label for="uid">User ID: <br> <span class="smalltext">Use your email address</span></label>
+                <div class="input-container">
+                    <input type="email"  id="uid" placeholder="Email Address">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pass1">Password:</label>
+                <div class="input-container">
+                    <input type="password"  id="pass1" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ul_remember">Keep me reminded</label>
+                <div class="input-container">
+                    <input type="checkbox" id="ul_remember" name="ul_remember" value="1">
+                </div>
+            </div>
+
+
+            <div class="group">
+                <button type="submit" class="btn-grey">Login</button>
+
+            </div>
+        </form>
+    </div>
+</div>
+-->
+<script type="application/javascript">
+    function reset_pass()
+    {
+        //alert('aa');
+        var ulf_email=$("#ulr_mail").val().trim();
+
+        var chk=1;
+        var error_str="";
+        if (!ValidateEmail(ulf_email))
+        {
+            error_str='<i class="fa fa-exclamation-triangle"></i> Please Enter A valid Email.';
+            chk=0;
+        }
+        if(error_str!="")
+        {
+            $("#reset_error").html(error_str);
+            $("#reset_error").attr('class', 'alert-yellow');
+            $('#reset_error').slideDown();
+        }
+        else
+        {
+            //return false;
+            $.ajax({
+                url: "/index/resetpass",
+                data: { ulf_email: ulf_email }
+            }).done(function(data) {
+                    //alert(data);
+                    if(data*1)
+                    {
+                        $("#reset_error").html('<i class="fa fa-envelope"></i> An email with instructions to <strong>Reset your Password</strong> has been sent to your email.');
+                        $("#reset_error").attr('class', 'alert-green');
+                    }
+                    else
+                    {
+                        $("#reset_error").html('<i class="fa fa-exclamation-triangle"></i> E-mail is not present in our database please Register');
+                        $("#reset_error").attr('class', 'alert-yellow');
+                    }
+                    $('#reset_error').slideDown();
+
+                });
+        }
+
+    }
+
+
+    function check_email(p_email)
+    {
+        $.ajax({
+            url: "/index/dupemail",
+            data: { U_email: p_email }
+        }).done(function(data) {
+                //alert(data);
+                $("#is_email_present").val(data);
+            });
+    }
+
+    function clear_msg_center(p)
+    {
+        if(p)
+        {
+            $("#msg_center").fadeOut(1000);
+        }
+        else
+        {
+            $("#msg_center").fadeOut(300);
+            $("#msg_center").fadeIn(300);
+            $("#msg_center").fadeOut(300);
+            $("#msg_center").fadeIn(300);
+            $("#msg_center").fadeOut(300);
+            $("#msg_center").fadeIn(300);
+            setTimeout('clear_msg_center(1)',5000);
+        }
+
+        //
+        //document.getElementById('msg_center').innerHTML="&nbsp;";
+    }
+    //setTimeout('clear_msg_center(0)',10000);
+
+    function show_reset()
+    {
+        $("#login_div").hide();
+        $("#reset_pass").show();
+    }
+    function show_login()
+    {
+        $("#reset_pass").hide();
+        $("#login_div").show();
+    }
+</script>
+
+    <div class="content-wrapper">
+        <div class="logo">
+        </div><br>
+        <form action="/index/loginauth" method="post">
+            <div class="login-form" id="login_div" style="display: block;">
+                <?php if($this->server_msg) { ?>
+                    <div class="alert-yellow" id="login_error"><?php print $this->server_msg; ?></div>
+                <? } else { ?>
+                <div class="alert-green" id="login_error" style="display: none;"></div>
+                <?php } ?>
+                <div class="form-group">
+                    <label for="uid" class="control-label disabled">Username</label>
+                    <div class="input-container">
+                        <input type="email" id="uid" name="ul_mail">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="uid" class="control-label disabled">Password</label>
+                    <div class="input-container">
+                        <input type="password" id="uid" name="ul_pass">
+                    </div>
+                </div>
+                <a href="#" onclick="show_reset();">I Forgot my Password</a>
+                <button type="submit" class="btn-accent pull-right">Login</button>
+            </div>
+
+            <div class="login-form" id="reset_pass" style="display: none;">
+                <div class="alert-green" id="reset_error" style="display: none;">
+                </div>
+                <h2 class="title">Forgot Password</h2>
+                <div class="form-group">
+                    <label for="uid" class="control-label disabled">What is your username or email address?</label>
+                    <div class="input-container">
+                        <input type="email" id="ulr_mail">
+                    </div>
+                </div>
+                <a href="#" onclick="show_login();">Go to login</a>
+                <button type="button" class="btn-accent pull-right" onclick="reset_pass();">Reset Password</button>
+            </div>
+
+        </form>
+       <!-- <p class="text">
+            <strong>This is Photoshop's version  of Lorem Ipsum</strong>
+            <br>
+            Proin gravida nibh vel velit auctor aliquet. Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit.
+        </p>-->
+    </div>

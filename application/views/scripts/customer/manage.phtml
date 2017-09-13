@@ -1,0 +1,131 @@
+<script type="application/javascript">
+function sub_check()
+{
+    var customer_name = $("#customer_name_new").val().trim();
+    var contact_number = $("#contact_number").val().trim();
+    var cust_exist =  $("#cust_exist").val() ;
+    var company = $("#company").val().trim() ;
+    var error = '';
+    var pattern_contact = /^\d+$/;
+    if(!customer_name)
+    {
+        error += '1';
+        $("#err_customer_name").html("Customer Name is mandatory");
+    }else{
+        $("#err_customer_name").html("&nbsp");
+    }
+
+    if(!contact_number)
+    {
+        error += '2';
+        $("#err_contact_number").html("Contact number is mandatory");
+    }else if(!pattern_contact.test(contact_number)){
+        error += '3';
+        $("#err_contact_number").html("Contact number must be numeric");
+    }else if(cust_exist == '1'){
+        error += '4';
+        $("#err_contact_number").html("This number already exist !");
+    }else{
+        //alert(check_customer(contact_number));
+
+        $("#err_contact_number").html("&nbsp");
+    }
+
+    if(!company)
+    {
+        error += '5';
+        $("#err_company").html("Please select a company");
+    }else{
+        $("#err_company").html("&nbsp");
+    }
+
+    if(error)
+    return false;
+
+}
+
+    function check_customer(cust_no)
+    {
+        //$("#cust_exist").val("1");
+        var ret = 0;
+        if(!cust_no)
+        {
+            $("#err_contact_number").html("Contact number is mandatory");
+        }else{
+            var idd = $("#idd").val().trim();
+            $.ajax({
+                type: 'GET',
+                url: "/Customer/duplicatecustomer/",
+                data: { cust_no: cust_no , idd:idd}
+            }).done(function(data) {
+                if(data > 0)
+                {
+                    $("#cust_exist").val("1");
+                    $("#err_contact_number").html("This number already exist !");
+                }else{
+                    $("#cust_exist").val("0");
+                    $("#err_contact_number").html("&nbsp;");
+                }
+            });
+        }
+
+
+    }
+
+</script>
+<div class="content-wrapper">
+    <h2 class="heading"><?php echo $this->customer_detail['customer_id'] ? 'Update Customer' : 'Add a New Customer' ?></h2>
+    <div class="content-main full">
+        <form class="default-form" action="/Customer/submitcustomer/" onsubmit="return sub_check();" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="idd" id="idd" value="<?php echo $this->customer_detail['customer_id'] ? $this->customer_detail['customer_id'] : '' ?>">
+            <input type="hidden" name="cust_exist" id="cust_exist" >
+
+
+            <div class="form-group">
+                <label for="pass2" class="control-label">Customer Name <span class="red">*</span><span class="smalltext required"></label>
+                <div class="input-container">
+                    <input type="text" placeholder="Customer Name" id="customer_name_new" name="customer_name" autocomplete="off" value="<?php echo $this->customer_detail['customer_name'] ? $this->customer_detail['customer_name'] : '' ?>">
+                    <span class="error" id="err_customer_name">&nbsp;</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="uid">Contact Number: <span class="red">*</span><span class="smalltext required"></label>
+                <div class="input-container">
+                    <input type="text" placeholder="Contact Number" id="contact_number" name="contact_number" autocomplete="off" onkeyup="return check_customer(this.value);" onblur="return check_customer(this.value);" value="<?php echo $this->customer_detail['contact_number'] ? $this->customer_detail['contact_number'] : '' ?>">
+                    <span class="error" id="err_contact_number">&nbsp;</span>
+
+                </div>
+            </div>
+            <?php if ($_SESSION['tranzgo_session']['account_id'] == 1) { ?>
+                <div class="form-group" id="company_div">
+                    <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                    <div class="input-container">
+                        <select name="company" id="company">
+                            <option value="">Select</option>
+                            <?php foreach ($this->companyList as $k => $v) { ?>
+                                <option value="<?php echo $v['company_id']; ?>" <?php if ($v['company_id'] == $this->customer_detail['company_id']) { echo 'selected'; } ?>><?php echo $v['company_name']; ?></option>
+                            <?php } ?>
+                        </select>
+                        <span class="error" id="err_company">&nbsp;</span>
+                    </div>
+                </div>
+            <?php } else { ?>
+                <div class="form-group" id="company_div">
+                    <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                    <div class="input-container">
+                        <select name="company" id="company">
+                            <option value="<?php echo $this->getCompanyBySessId['company_id']; ?>"><?php echo $this->getCompanyBySessId['company_name']; ?></option>
+                        </select>
+                        <span class="error" id="err_company">&nbsp;</span>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <div class="group">
+                <button type="button" onclick="cancel('<?php echo $this->cancel_link?>');" class="btn-grey">Cancel</button>
+                <button type="submit" class="btn-green"><?php echo $this->customer_detail['customer_id'] ? 'Update Customer' : 'Add Customer' ?></button>
+            </div>
+        </form>
+    </div>
+</div>

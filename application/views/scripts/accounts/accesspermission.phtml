@@ -1,0 +1,137 @@
+<?php $user_details=$this->user_details;?>
+<script src="<?php echo $this->site_asset;?>js/defined_list_fucntions.js" xmlns="http://www.w3.org/1999/html"></script>
+<script type="application/javascript">
+    function Acheck()	// function for checking duplicate company name
+    {
+        var numa=document.getElementById('menu_hide').value
+        if (document.getElementById('all').checked)
+        {
+            for (var a=1; a<=numa; a++)
+            {
+                document.getElementById('menu_'+a).checked=true;
+                var numb=document.getElementById('menu_hide_'+a).value
+                for (var b=1; b<=numb; b++)
+                {
+                    document.getElementById('menu_'+a+'_'+b).checked=true;
+                }
+            }
+        }
+        else
+        {
+            for (var a=1; a<=numa; a++)
+            {
+                document.getElementById('menu_'+a).checked=false;
+                var numb=document.getElementById('menu_hide_'+a).value
+                for (var b=1; b<=numb; b++)
+                {
+                    document.getElementById('menu_'+a+'_'+b).checked=false;
+                }
+            }
+        }
+    }
+    function Pcheck(a)	// function for checking duplicate company name
+    {
+        var num=document.getElementById('menu_hide_'+a).value
+        if (document.getElementById('menu_'+a).checked)
+        {
+            for (var b=1; b<=num; b++)
+            {
+                document.getElementById('menu_'+a+'_'+b).checked=true;
+            }
+        }
+        else
+        {
+            for (var b=1; b<=num; b++)
+            {
+                document.getElementById('menu_'+a+'_'+b).checked=false;
+            }
+        }
+    }
+    function Ccheck(a,b)	// function for checking duplicate company name
+    {
+        document.getElementById('all').checked=false;
+        var num=document.getElementById('menu_hide_'+a).value
+        var check=false;
+        for (var b=1; b<=num; b++)
+        {
+            if (document.getElementById('menu_'+a+'_'+b).checked)
+            {
+                check=true;
+            }
+        }
+        document.getElementById('menu_'+a).checked=check;
+    }
+</script>
+<div class="page-content">
+    <div class="content sm-gutter">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="grid simple">
+                    <div class="grid-body no-border">
+                        <div class="row">
+                        	<form action="/Accounts/submitaccesspermission" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="user_id" value="<?php print $this->user_id; ?>" />
+                            <input type="hidden" name="keyy" value="<?php print $this->keyy; ?>" />
+                            	<div class="col-md-12">
+                                <div class="grid simple ">
+                                    <div class="grid-title no-border">
+                                        <h4>List <span class="semi-bold">Users</span></h4>
+                                    </div>
+									
+								    <input type="checkbox" onClick="Acheck();" id="all"/>All
+									
+                                    <div class="list_user">
+                                    	<ul>
+                                            <?php
+                                            $i=0;
+                                            foreach($this->menu_table as $pmenu_id=>$v) { ?>
+                                                <li style="min-height:252px;">
+                                                    <div class="label_class">
+                                                        <ul>
+                                                            <li><input type="checkbox" name="menu_id[]" value="<?php print $pmenu_id; ?>"  id="menu_<?php print ++$i;?>" onClick="Pcheck('<?php print $i;?>');" <?php if(array_key_exists($pmenu_id,$this->user_permission_table)) { ?> checked<?php } ?> >
+                                                                <label for="menu_<?php print $i;?>"><?php print $v['menu_name']; ?></label></li>
+                                                        </ul>
+                                                    </div>
+                                                    <?php
+                                                    $j=0;
+                                                    if(isset($v['sub_menues']))
+                                                    {
+                                                    ?>
+                                                    <div class="input_class">
+                                                        <ul>
+                                                            <?php foreach($v['sub_menues'] as $menu_id=>$v2) { ?>
+                                                                <li>
+                                                                    <input type="checkbox" name="menu_id[]" value="<?php print $menu_id; ?>"  id="menu_<?php print $i;?>_<?php print ++$j;?>" onClick="Ccheck('<?php print $i;?>',<?php print $j;?>);" <?php if(array_key_exists($menu_id,$this->user_permission_table)) { ?> checked<?php } ?> >
+                                                                    <label for="menu_<?php print $i;?>_<?php print $j;?>"><?php print $v2; ?></label>
+                                                                </li>
+                                                            <?php } ?>
+                                                        </ul>
+                                                    </div>
+                                                    <?php } ?>
+                                                    <input type="hidden" value="<?php print $j;?>" id="menu_hide_<?php print $i;?>"/>
+
+                                                    <div class="clr"></div>
+                                                </li>
+<!--                                                --><?php //if(!($i%3)) { ?><!--<div class="clr"></div>--><?php //} ?>
+                                            <?php } ?>
+                                            <input type="hidden" value="<?php print $i;?>" id="menu_hide"/>
+                                        </ul>
+                                        <div class="clr"></div>
+                                    </div>
+                                     <div class="clr"></div>
+                                </div>
+                                <div class="form-actions">
+                                    <div class="pull-left">
+                                        <button type="submit" class="btn btn-success btn-cons"><i class="icon-ok"></i> Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<div id="page-content-wrapper" class="content">
+<!--  
+  <div class="header-fixed">
+        <nav class="branding-menu">
+            <a href="#menu-toggle" class="btn btn-default" id="menu-toggle"><i class="fa fa-bars"></i></a>
+            <ul>
+                <li class="sidebar-brand">
+                    <img src="<?php print $this->site_asset; ?>/img/logo-tw.png" alt="">
+                </li>
+                <li class="sidebar-brand" id="msg_center"><?php if($this->server_msg){ print $this->server_msg; } ?></li>
+            </ul>
+
+        </nav>
+        <div class="notification">
+        </div>
+    </div>
+-->
+
+    <script type="application/javascript">
+        function clear_msg_center(p)
+        {
+            if(p)
+            {
+                $("#msg_center").fadeOut(1000);
+            }
+            else
+            {
+                $("#msg_center").fadeOut(300);
+                $("#msg_center").fadeIn(300);
+                $("#msg_center").fadeOut(300);
+                $("#msg_center").fadeIn(300);
+                $("#msg_center").fadeOut(300);
+                $("#msg_center").fadeIn(300);
+                setTimeout('clear_msg_center(1)',5000);
+            }
+            //document.getElementById('msg_center').innerHTML="&nbsp;";
+        }
+        setTimeout('clear_msg_center(0)',10000);
+    </script>

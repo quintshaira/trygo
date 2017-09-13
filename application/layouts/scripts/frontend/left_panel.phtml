@@ -1,0 +1,113 @@
+
+</head>
+<!-- Heading End -->
+
+<!-- Main Body Start -->
+<body class="">
+
+	<nav class="navbar navbar-default no-margin">
+        <!--<div class="navbar-header fixed-brand">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="<?php print $this->site_asset; ?>img/avatar.png" alt="" class="avatar"><span class="expanded">Hello, <strong><?php print $_SESSION['tranzgo_session']['user_fname']; ?>!</strong></span><i class="fa fa-caret-down"></i></a>
+			<ul class="dropdown-menu">
+                <?php if($_SESSION['tranzgo_session']['menu_permission']['My_Profile']) { ?>
+                    <li><a href="/index/profile">My Profile</a></li>
+                <?php } ?>
+                <li><a href="/index/signout">Log Out</a></li>
+            </ul>
+			 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"  id="menu-toggle1"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span></button>
+        </div><!-- navbar-header-->
+		
+		<div class="navbar-header fixed-brand">
+           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"  id="menu-toggle1"><i class="fa fa-bars"></i></button>
+            <a class="navbar-brand" href="#"><i class="fa fa-watch fa-4"></i> Tranz | Watch Corp.</a>
+         </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active" ><button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2"> <i class="fa fa-bars"></i></button></li>
+            </ul>
+        </div>
+		
+		<!-- <div class="profile">
+            <a href="#" id="profile" class="dropdown-toggle" data-toggle="dropdown"><img src="<?php print $this->site_asset; ?>img/avatar.png" alt="" class="avatar"><span class="expanded">Hello, <strong><?php print $_SESSION['tranzgo_session']['user_fname']; ?>!</strong></span><i class="fa fa-caret-down"></i></a>
+            <ul class="dropdown-menu">
+                <?php if($_SESSION['tranzgo_session']['menu_permission']['My_Profile']) { ?>
+                    <li><a href="/index/profile">My Profile</a></li>
+                <?php } ?>
+                <li><a href="/index/signout">Log Out</a></li>
+            </ul>
+        </div>-->
+    </nav>
+
+<!-- Content Here -->
+<div id="wrapper">
+<div id="sidebar-wrapper" class="sidebar">
+    <ul class="sidebar-nav nav-pills nav-stacked" style="margin-top:6px" id="menu">
+		
+		 <a href="#" class="profile_span_a" style="margin-left: 3%;"><img src="<?php print $this->site_asset; ?>img/avatar.png" alt="" class="avatar"><span class="expanded" style="color: #ddd;">&nbsp;&nbsp;&nbsp;&nbsp;Hello, <strong><?php print $_SESSION['tranzgo_session']['user_fname']; ?>!</strong></span></a><br>
+            
+                <?php if($_SESSION['tranzgo_session']['menu_permission']['My_Profile']) { ?>
+                    <span class="profile_span" style="padding: 0 55px;"><a href="/index/profile">My Profile</a></span><br>
+                <?php } ?>
+                
+                
+                <span class="profile_span" style="padding: 0 55px;"><a href="/index/signout">Log Out</a></span>
+           
+        <!--<div class="profile">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="<?php print $this->site_asset; ?>img/avatar.png" alt="" class="avatar"><span class="expanded">Hello, <strong><?php print $_SESSION['tranzgo_session']['user_fname']; ?>!</strong></span><i class="fa fa-caret-down"></i></a>
+            <ul class="dropdown-menu">
+                <?php if($_SESSION['tranzgo_session']['menu_permission']['My_Profile']) { ?>
+                    <li><a href="/index/profile">My Profile</a></li>
+                <?php } ?>
+                <li><a href="/index/signout">Log Out</a></li>
+            </ul>
+        </div>-->
+
+        <?php //foreach($_SESSION['tranzgo_session']['menu'][0] as $k=>$v) {
+            //$is_submenu=(isset($_SESSION['tranzgo_session']['menu'][$k]) && count($_SESSION['tranzgo_session']['menu'][$k]))?1:0;
+            ?>
+
+			 <?php foreach($_SESSION['tranzgo_session']['menu'][0] as $k=>$v) {
+            $is_submenu=(isset($_SESSION['tranzgo_session']['menu'][$k]) && count($_SESSION['tranzgo_session']['menu'][$k]))?1:0;
+            ?>
+			
+            <?php if($is_submenu) { ?>
+
+
+                <li>
+                    <a href="<?php print $v['menu_page_name'];?>">
+                        <i class="<?php print $v['menu_image'];?>"></i>
+                        <span class="expanded"><?php print $v['menu_name'];?></span>
+                    </a>
+                    <ul class="nav-pills nav-stacked" style="list-style-type:none;">
+                        <?php foreach($_SESSION['tranzgo_session']['menu'][$k] as $k1=>$v1) { ?>
+                            <li><a href="<?php print $v1['menu_page_name'];?>"><?php print $v1['menu_name'];?></a></li>
+                        <?php } ?>
+                    </ul>
+                </li>
+
+            <?php } else {  ?>
+                <li>
+                    <a href="<?php print $v['menu_page_name'];?>">
+                        <i class="<?php print $v['menu_image'];?>"></i>
+                        <span class="expanded"><?php print $v['menu_name'];?></span>
+                    </a>
+                </li>
+            <?php } ?>
+
+        <?php } ?>
+		</ul>
+
+        <!-- old menu
+        <li><a href="#"><div class="fa fa-tachometer"></div><span class="expanded">Dashboard</span></a></li>
+        <li class="parent"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><div class="fa fa-user"></div><span class="expanded">Users</span></a>
+            <ul class="sub-menu">
+                <li><a href="#">Add User</a></li>
+                <li><a href="#">All Users</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><div class="fa fa-file"></div><span class="expanded">Create New Measurement Quarters</span></a></li>
+        <li><a href="#"><div class="fa fa-check-square"></div><span class="expanded">For Approval</span><span class="bubble">18</span></a></li>
+        -->
+	</div>
+</div>

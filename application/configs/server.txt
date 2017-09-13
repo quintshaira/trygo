@@ -1,0 +1,31 @@
+url
+http://173.254.46.149/emrgrk/
+http://emrgrk.emaginefilms.com/
+
+
+hosting site
+------------------------------------------
+hostmonster.com
+user:creaturestheseries.com
+pass:AlfaOmega777#
+
+
+ftp
+------------------------------------------
+host:emaginefilms.com  or  173.254.46.149
+user:emrgrk
+pass:emrgrk@123
+
+database
+----------------------------------------------------------
+https://host417.hostmonster.com:2083/cpsess329353031/3rdparty/phpMyAdmin/index.php?input_username=creatur8_emrgrk
+
+name: creatur8_emr_work
+user:creatur8_emrgrk
+pass:emrgrk@123
+
+579941769
+
+WGFJQG9
+WG28LSG
+WHB9X9B
