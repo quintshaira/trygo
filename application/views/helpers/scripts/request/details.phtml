@@ -2,20 +2,26 @@
     <div class="content-sidebar transparent">
         <div>
             <?php
-            if($this->request_detail['request_status_id']==1)
-            {
-            ?>
-                <button type="submit" class="btn-grey" <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Approve')) { ?> onclick="window.location='/Request/manage/idd/<?php echo $this->idd;?>/status/2'" <?php } else { print 'disabled'; } ?>>Approve</button>
-                <button type="submit" class="btn-accent" <?php if($this->ob_LoginAuth->chk_menu_permission('Request_Reject')) { ?> onclick="window.location='/Request/manage/idd/<?php echo $this->idd;?>/status/3'" <?php } else { print "disabled"; }?> >Reject</button>
+            if ($this->request_detail['request_status_id']==1) {
+                ?>
+                <button type="submit" class="btn-grey" <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Approve')) {
+                    ?> onclick="window.location='/Request/manage/idd/<?php echo $this->idd; ?>/status/2'" <?php
+                } else {
+                    print 'disabled';
+                } ?>>Approve</button>
+                <button type="submit" class="btn-accent" <?php if ($this->ob_LoginAuth->chk_menu_permission('Request_Reject')) {
+                    ?> onclick="window.location='/Request/manage/idd/<?php echo $this->idd; ?>/status/3'" <?php
+                } else {
+                    print "disabled";
+                } ?> >Reject</button>
             <?php
-            }else if($this->request_detail['request_status_id']==2)
-            {
-            ?>
+            } elseif ($this->request_detail['request_status_id']==2) {
+                ?>
                 <button type="submit" class="btn-green">Approved</button>
 
             <?php
-            }else{
-            ?>
+            } else {
+                ?>
             <button type="submit" class="btn-red">Rejected</button>
             <?php
             }
@@ -54,7 +60,7 @@
 
 
                     <td class="bold">Estimated Price (Php):</td>
-                    <td class="align-left"><?php echo $this->request_detail['estimated_price'] ? number_format($this->request_detail['estimated_price'] ,2) : 'N/A';?></td>
+                    <td class="align-left"><?php echo $this->request_detail['estimated_price'] ? number_format($this->request_detail['estimated_price'], 2) : 'N/A';?></td>
                 </tr>
                 <tr class="border-bottom">
                     <td class="bold">Rate:</td>
@@ -86,7 +92,7 @@
                     <td class="align-left"><?php echo $this->request_detail['requested_by_name'] ? $this->request_detail['requested_by_name'] : 'N/A';?></td>
                 </tr>
                 <tr class="border-bottom">
-                    <td class="bold">Assigned Driver 1:</td>
+                    <td class="bold">Assigned Drivertest 1:</td>
                     <td class="align-left"><?php echo $this->request_detail['assigned_driver_1_id_name'] ? $this->request_detail['assigned_driver_1_id_name'] : 'N/A';?></td>
 
                     <td class="bold">Updated On:</td>
@@ -116,25 +122,19 @@
             <table class="table-simple athird bordered">
                 <tr class="border-bottom">
                     <?php
-                    if(count($this->request_images) > 0)
-                    {
+                    if (count($this->request_images) > 0) {
                         $sl=1;
-                        foreach($this->request_images as $k=>$v)
-                        {
-                            if(count($this->request_images)==1)
-                            {
+                        foreach ($this->request_images as $k=>$v) {
+                            if (count($this->request_images)==1) {
                                 $width = '25%';
-                            }elseif(count($this->request_images)==2)
-                            {
+                            } elseif (count($this->request_images)==2) {
                                 $width = '50%';
-                            }elseif(count($this->request_images)==3)
-                            {
+                            } elseif (count($this->request_images)==3) {
                                 $width = '75%';
-                            }else{
+                            } else {
                                 $width = '100%';
-                            }
-                            ?>
-                            <td><img src="/public/uploads/request/<?php echo $v['image_name'];?>" width="<?php echo $width;?>"></td>
+                            } ?>
+                            <td><img src="/public/uploads/request/<?php echo $v['image_name']; ?>" width="<?php echo $width; ?>"></td>
 
                         <?php
                         }
