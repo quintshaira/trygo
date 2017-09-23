@@ -452,227 +452,249 @@
             <input type="hidden" name="cust_id" id="cust_id" value="<?php echo $this->request_detail['customer_id'] ? $this->request_detail['customer_id'] : '' ?>">
             <input type="hidden" name="estimated_price_num" id="estimated_price_num" value="<?php echo $this->request_detail['estimated_price'] ? $this->request_detail['estimated_price'] : '' ?>">
 
-
-
-            <div class="form-group">
-                <label for="pass2" class="control-label">Driver Task <span class="red">*</span><span class="smalltext required"></label>
-                <div class="input-container">
-                    <select name="driver_task_id" id="driver_task_id" onchange="change_validate(this.value)">
-                        <option value="">Select</option>
-                        <?php foreach($this->driverTaskList as $k=>$v){?>
-                            <option value="<?php echo $v['driver_task_id']; ?>"
-                                <?php if($v['driver_task_id']==$this->request_detail['driver_task_id']){ echo 'selected';} ?>><?php echo $v['driver_task_name']; ?></option>
-                        <?php }?>
-
-                    </select>
-                    <span class="error" id="err_driver_task_id">&nbsp;</span>
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label for="uid">Customer Name: <span class="red">*</span><br></label>
-                <div class="input-container">
-                    <input placeholder="Customer Name" id="customer_name" name="customer_name" onblur="get_id(this.value)" value="<?php echo $this->request_detail['customer_name'] ? $this->request_detail['customer_name'] : '' ?>"/>
-                   <span class="error" id="err_customer_name">&nbsp;</span>
-                </div>
-            </div>
-            <div class="form-group" id="contact_no_div">
-                <label for="uid">Customer Contact Number: <span class="red">*</span><br></label>
-                <div class="input-container">
-                    <input placeholder="Contact Number" id="contact_number" name="contact_number"  value=""/>
-                    <span class="error" id="err_contact_number">&nbsp;</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="pass2" class="control-label">No. of Days <span class="red">*</span></label>
-                <div class="input-container">
-                    <input class="form-control text-center" id="no_of_days" name="no_of_days" autocomplete="off" onkeyup="change_date();" onchange="change_date();" value="<?php echo $this->request_detail['no_of_days'] ? $this->request_detail['no_of_days'] : $this->no_of_days ?>"   data-rule="requested"  type="number" min="0" >
-                    <span class="error" id="err_no_of_days">&nbsp;</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="uid">Rent From: <span class="red">*</span><br></label>
-                <div class="input-container">
-                    <div class="input-group date form_datetime col-md-8" id="rent_from_div">
-                        <input class="form-control" placeholder="Rent From" type="text" id="rent_from" name="rent_from"  onblur="chk_dates_validate()" value="<?php echo $this->request_detail['rent_from'] ? $this->request_detail['rent_from'] : $this->from ?>">
-                        <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
-                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                    </div>
-                   <span class="error" id="err_rent_from">&nbsp;</span>
-                </div>
-            </div>
-
-            <!--<div class="form-group">
-                <label for="uid">Rent To: <span class="red">*</span><br></label>
-                <div class="input-container">
-                    <div class="input-group date form_datetime col-md-8" id="rent_to_div">
-                        <input class="form-control" placeholder="Rent To" type="text" id="rent_to" name="rent_to" onblur="chk_dates_validate()"  value="<?php /*echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : '' */?>">
-                        <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
-                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                    </div>
-                    <span class="error" id="err_rent_to">&nbsp;</span>
-                </div>
-            </div>-->
-
-
-
-            <div class="form-group">
-                <label for="uid">Rent To: <span class="red">*</span><br></label>
-                <div class="input-container">
-                        <input class="form-control" placeholder="Rent To" readonly type="text" id="rent_to" name="rent_to" value="<?php echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : $this->to ?>">
-                    <span class="error" id="err_rent_to">&nbsp;</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="pass2" class="control-label">Vehicle <span class="smalltext required"></label>
-                <div class="input-container">
-                    <select name="rental_id" id="rental_id">
-                        <option value="">Select</option>
-                        <?php foreach($this->assignedVehicleList as $k=>$v){?>
-                            <option value="<?php echo $v['rental_id']; ?>"
-                                <?php echo (($this->request_detail['vehicle_id'] == $v['rental_id']) ? "Selected" :(($this->rentid == $v['rental_id']) ? "Selected" :" ")); ?>><?php echo $v['assigned_vehicle_name']; ?></option>
-                        <?php }?>
-
-                    </select>
-                    <span class="error" id="err_rental_id">&nbsp;</span>
-                </div>
-            </div>
-
-
-
-            <div class="form-group">
-                <label for="pass2" class="control-label">Package <span class="red">*</span><span class="smalltext required"></label>
-                <div class="input-container">
-                    <select name="package_id" id="package_id" onchange="calc_estimated_cost(this.value);">
-                        <option value="">Select</option>
-                        <?php foreach($this->packageList as $k=>$v){?>
-                            <option value="<?php echo $v['package_id']; ?>"
-                                <?php if($v['package_id']==$this->request_detail['package_id']){ echo 'selected';} ?>><?php echo $v['package_name']; ?></option>
-                        <?php }?>
-
-                    </select>
-                    <span class="error" id="err_package_id">&nbsp;</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="uid">Estimated Price: <span class="red">*</span><br></label>
-                <div class="input-container">
-                    <input type="text" placeholder="Estimated Price" id="estimated_price"  name="estimated_price" value="<?php echo $this->request_detail['estimated_price'] ? number_format($this->request_detail['estimated_price'], 2, '.', ',') : '' ?>" readonly>
-                    <span class="error" id="err_estimated_price">&nbsp;</span>
-
-                </div>
-            </div>
-            <?php if($_SESSION['tranzgo_session']['account_id']==1) { ?>
+            <?php
+                if ($this->ses_role != 4) {
+                    ?>
                 <div class="form-group">
-                    <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                    <label for="pass2" class="control-label">Driver Task <span class="red">*</span><span class="smalltext required"></label>
                     <div class="input-container">
-                        <select name="company" id="company">
+                        <select name="driver_task_id" id="driver_task_id" onchange="change_validate(this.value)">
                             <option value="">Select</option>
-                            <?php foreach($this->companyList as $k=>$v){?>
-                                <option value="<?php echo $v['company_id']; ?>"
-                                    <?php if($v['company_id']==$this->request_detail['company_id']){ echo 'selected';} ?>><?php echo $v['company_name']; ?></option>
-                            <?php }?>
+                            <?php foreach ($this->driverTaskList as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['driver_task_id']; ?>"
+                                    <?php if ($v['driver_task_id']==$this->request_detail['driver_task_id']) {
+                            echo 'selected';
+                        } ?>><?php echo $v['driver_task_name']; ?></option>
+                            <?php
+                    } ?>
+
                         </select>
-                        <span class="error" id="err_company">&nbsp;</span>
+                        <span class="error" id="err_driver_task_id">&nbsp;</span>
                     </div>
                 </div>
-            <?php }else {  ?>
+
                 <div class="form-group">
-                    <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                    <label for="uid">Customer Name: <span class="red">*</span><br></label>
                     <div class="input-container">
-                        <select name="company" id="company">
-                            <option value="<?php echo $this->getCompanyBySessId['company_id']; ?>"><?php echo $this->getCompanyBySessId['company_name']; ?></option>
-                        </select>
-                        <span class="error" id="err_company">&nbsp;</span>
+                        <input placeholder="Customer Name" id="customer_name" name="customer_name" onblur="get_id(this.value)" value="<?php echo $this->request_detail['customer_name'] ? $this->request_detail['customer_name'] : '' ?>"/>
+                       <span class="error" id="err_customer_name">&nbsp;</span>
                     </div>
                 </div>
-            <?php  } ?>
-
-
-
-
-
-            <div class="form-group dtd">
-                <label for="uid">Delivery Address: <span class="red" id="delivery_address_star">*</span><br></label>
-                <div class="input-container">
-                    <textarea class="form-control" placeholder="Delivery Address" id="delivery_address"  name="delivery_address"><?php echo $this->request_detail['delivery_address'] ? $this->request_detail['delivery_address'] : '' ?></textarea>
-                    <span class="error" id="err_delivery_address">&nbsp;</span>
-
+                <div class="form-group" id="contact_no_div">
+                    <label for="uid">Customer Contact Number: <span class="red">*</span><br></label>
+                    <div class="input-container">
+                        <input placeholder="Contact Number" id="contact_number" name="contact_number"  value=""/>
+                        <span class="error" id="err_contact_number">&nbsp;</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group dtd">
-                <label for="uid">Assigned Driver 1: <span class="red" id="assigned_driver1_star">*</span><br></label>
-                <div class="input-container">
-                    <select id="assigned_driver_1_id"  name="assigned_driver_1_id">
-                        <option value="">Select</option>
-                        <?php foreach($this->driverList as $k=>$v){?>
-                            <option value="<?php echo $v['user_id']; ?>"
-                                <?php if($v['user_id']==$this->request_detail['assigned_driver_1_id']){ echo 'selected';} ?>><?php echo $v['user_full_name']; ?></option>
-                        <?php }?>
-
-                    </select>
-
-                    <span class="error" id="err_assigned_driver_1_id">&nbsp;</span>
-
+                <div class="form-group">
+                    <label for="pass2" class="control-label">No. of Days <span class="red">*</span></label>
+                    <div class="input-container">
+                        <input class="form-control text-center" id="no_of_days" name="no_of_days" autocomplete="off" onkeyup="change_date();" onchange="change_date();" value="<?php echo $this->request_detail['no_of_days'] ? $this->request_detail['no_of_days'] : $this->no_of_days ?>"   data-rule="requested"  type="number" min="0" >
+                        <span class="error" id="err_no_of_days">&nbsp;</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group dtp">
-                <label for="uid">Pickup Address: <span class="red" id="pickup_address_star">*</span><br></label>
-                <div class="input-container">
-                    <textarea class="form-control" placeholder="Pickup Address" id="pickup_address"  name="pickup_address"><?php echo $this->request_detail['pickup_address'] ? $this->request_detail['pickup_address'] : '' ?></textarea>
-                    <span class="error" id="err_pickup_address">&nbsp;</span>
-
+                <div class="form-group">
+                    <label for="uid">Rent From: <span class="red">*</span><br></label>
+                    <div class="input-container">
+                        <div class="input-group date form_datetime col-md-8" id="rent_from_div">
+                            <input class="form-control" placeholder="Rent From" type="text" id="rent_from" name="rent_from"  onblur="chk_dates_validate()" value="<?php echo $this->request_detail['rent_from'] ? $this->request_detail['rent_from'] : $this->from ?>">
+                            <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                       <span class="error" id="err_rent_from">&nbsp;</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group dtp">
-                <label for="uid">Assigned Driver 2: <span class="red" id="assigned_driver2_star">*</span><br></label>
-                <div class="input-container">
-                    <select id="assigned_driver_2_id"  name="assigned_driver_2_id">
-                        <option value="">Select</option>
-                        <?php foreach($this->driverList as $k=>$v){?>
-                            <option value="<?php echo $v['user_id']; ?>"
-                                <?php if($v['user_id']==$this->request_detail['assigned_driver_2_id']){ echo 'selected';} ?>><?php echo $v['user_full_name']; ?></option>
-                        <?php }?>
+                <!--<div class="form-group">
+                    <label for="uid">Rent To: <span class="red">*</span><br></label>
+                    <div class="input-container">
+                        <div class="input-group date form_datetime col-md-8" id="rent_to_div">
+                            <input class="form-control" placeholder="Rent To" type="text" id="rent_to" name="rent_to" onblur="chk_dates_validate()"  value="<?php /*echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : '' */?>">
+                            <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                        <span class="error" id="err_rent_to">&nbsp;</span>
+                    </div>
+                </div>-->
 
-                    </select>
-
-                    <span class="error" id="err_assigned_driver_2_id">&nbsp;</span>
-
+                <div class="form-group">
+                    <label for="uid">Rent To: <span class="red">*</span><br></label>
+                    <div class="input-container">
+                            <input class="form-control" placeholder="Rent To" readonly type="text" id="rent_to" name="rent_to" value="<?php echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : $this->to ?>">
+                        <span class="error" id="err_rent_to">&nbsp;</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="uid">Payment Method: <br></label>
-                <div class="input-container">
-                    <select name="payment_method_id" id="payment_method_id">
-                        <?php foreach($this->paymentMethod as $k=>$v){?>
-                            <option value="<?php echo $v['payment_method_id']; ?>"
-                                <?php if($v['payment_method_id']==$this->request_detail['payment_method_id']){ echo 'selected';} ?>><?php echo $v['payment_method_name']; ?></option>
-                        <?php }?>
-                    </select>
-                    <span class="error" id="err_payment_method_id">&nbsp;</span>
+                <div class="form-group">
+                    <label for="pass2" class="control-label">Vehicle <span class="smalltext required"></label>
+                    <div class="input-container">
+                        <select name="rental_id" id="rental_id">
+                            <option value="">Select</option>
+                            <?php foreach ($this->assignedVehicleList as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['rental_id']; ?>"
+                                    <?php echo(($this->request_detail['vehicle_id'] == $v['rental_id']) ? "Selected" :(($this->rentid == $v['rental_id']) ? "Selected" :" ")); ?>><?php echo $v['assigned_vehicle_name']; ?></option>
+                            <?php
+                    } ?>
+
+                        </select>
+                        <span class="error" id="err_rental_id">&nbsp;</span>
+                    </div>
                 </div>
-            </div>
 
+                <div class="form-group">
+                    <label for="pass2" class="control-label">Package <span class="red">*</span><span class="smalltext required"></label>
+                    <div class="input-container">
+                        <select name="package_id" id="package_id" onchange="calc_estimated_cost(this.value);">
+                            <option value="">Select</option>
+                            <?php foreach ($this->packageList as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['package_id']; ?>"
+                                    <?php if ($v['package_id']==$this->request_detail['package_id']) {
+                            echo 'selected';
+                        } ?>><?php echo $v['package_name']; ?></option>
+                            <?php
+                    } ?>
 
-
-
-            <div class="form-group">
-                <label for="uid">Notes: <br></label>
-                <div class="input-container">
-                    <textarea class="form-control" placeholder="Notes" id="note"  name="note"><?php echo $this->request_detail['note'] ? $this->request_detail['note'] : '' ?></textarea>
-                    <span class="error" id="err_note">&nbsp;</span>
-
+                        </select>
+                        <span class="error" id="err_package_id">&nbsp;</span>
+                    </div>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label for="uid">Estimated Price: <span class="red">*</span><br></label>
+                    <div class="input-container">
+                        <input type="text" placeholder="Estimated Price" id="estimated_price"  name="estimated_price" value="<?php echo $this->request_detail['estimated_price'] ? number_format($this->request_detail['estimated_price'], 2, '.', ',') : '' ?>" readonly>
+                        <span class="error" id="err_estimated_price">&nbsp;</span>
+
+                    </div>
+                </div>
+                <?php if ($_SESSION['tranzgo_session']['account_id']==1) {
+                        ?>
+                    <div class="form-group">
+                        <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                        <div class="input-container">
+                            <select name="company" id="company">
+                                <option value="">Select</option>
+                                <?php foreach ($this->companyList as $k=>$v) {
+                            ?>
+                                    <option value="<?php echo $v['company_id']; ?>"
+                                        <?php if ($v['company_id']==$this->request_detail['company_id']) {
+                                echo 'selected';
+                            } ?>><?php echo $v['company_name']; ?></option>
+                                <?php
+                        } ?>
+                            </select>
+                            <span class="error" id="err_company">&nbsp;</span>
+                        </div>
+                    </div>
+                <?php
+                    } else {
+                        ?>
+                    <div class="form-group">
+                        <label for="pass2" class="control-label">Company <span class="red">*</span></label>
+                        <div class="input-container">
+                            <select name="company" id="company">
+                                <option value="<?php echo $this->getCompanyBySessId['company_id']; ?>"><?php echo $this->getCompanyBySessId['company_name']; ?></option>
+                            </select>
+                            <span class="error" id="err_company">&nbsp;</span>
+                        </div>
+                    </div>
+                <?php
+                    } ?>
+
+                <div class="form-group dtd">
+                    <label for="uid">Delivery Address: <span class="red" id="delivery_address_star">*</span><br></label>
+                    <div class="input-container">
+                        <textarea class="form-control" placeholder="Delivery Address" id="delivery_address"  name="delivery_address"><?php echo $this->request_detail['delivery_address'] ? $this->request_detail['delivery_address'] : '' ?></textarea>
+                        <span class="error" id="err_delivery_address">&nbsp;</span>
+
+                    </div>
+                </div>
+
+                <div class="form-group dtd">
+                    <label for="uid">Assigned Driver 1: <span class="red" id="assigned_driver1_star">*</span><br></label>
+                    <div class="input-container">
+                        <select id="assigned_driver_1_id"  name="assigned_driver_1_id">
+                            <option value="">Select</option>
+                            <?php foreach ($this->driverList as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['user_id']; ?>"
+                                    <?php if ($v['user_id']==$this->request_detail['assigned_driver_1_id']) {
+                            echo 'selected';
+                        } ?>><?php echo $v['user_full_name']; ?></option>
+                            <?php
+                    } ?>
+
+                        </select>
+
+                        <span class="error" id="err_assigned_driver_1_id">&nbsp;</span>
+
+                    </div>
+                </div>
+
+                <div class="form-group dtp">
+                    <label for="uid">Pickup Address: <span class="red" id="pickup_address_star">*</span><br></label>
+                    <div class="input-container">
+                        <textarea class="form-control" placeholder="Pickup Address" id="pickup_address"  name="pickup_address"><?php echo $this->request_detail['pickup_address'] ? $this->request_detail['pickup_address'] : '' ?></textarea>
+                        <span class="error" id="err_pickup_address">&nbsp;</span>
+
+                    </div>
+                </div>
+
+                <div class="form-group dtp">
+                    <label for="uid">Assigned Driver 2: <span class="red" id="assigned_driver2_star">*</span><br></label>
+                    <div class="input-container">
+                        <select id="assigned_driver_2_id"  name="assigned_driver_2_id">
+                            <option value="">Select</option>
+                            <?php foreach ($this->driverList as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['user_id']; ?>"
+                                    <?php if ($v['user_id']==$this->request_detail['assigned_driver_2_id']) {
+                            echo 'selected';
+                        } ?>><?php echo $v['user_full_name']; ?></option>
+                            <?php
+                    } ?>
+
+                        </select>
+
+                        <span class="error" id="err_assigned_driver_2_id">&nbsp;</span>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="uid">Payment Method: <br></label>
+                    <div class="input-container">
+                        <select name="payment_method_id" id="payment_method_id">
+                            <?php foreach ($this->paymentMethod as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['payment_method_id']; ?>"
+                                    <?php if ($v['payment_method_id']==$this->request_detail['payment_method_id']) {
+                            echo 'selected';
+                        } ?>><?php echo $v['payment_method_name']; ?></option>
+                            <?php
+                    } ?>
+                        </select>
+                        <span class="error" id="err_payment_method_id">&nbsp;</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="uid">Notes: <br></label>
+                    <div class="input-container">
+                        <textarea class="form-control" placeholder="Notes" id="note"  name="note"><?php echo $this->request_detail['note'] ? $this->request_detail['note'] : '' ?></textarea>
+                        <span class="error" id="err_note">&nbsp;</span>
+
+                    </div>
+                </div>
+            <?php
+                }
+            ?>
 
             <div class="form-group">
                 <label for="uid">Image 1: <br></label>
@@ -703,29 +725,27 @@
                 </div>
             </div>
             <?php
-            if(count($this->request_images) > 0)
-            {
-            $sl=1;
-            foreach($this->request_images as $k=>$v)
-            {
-            ?>
+            if (count($this->request_images) > 0) {
+                $sl=1;
+                foreach ($this->request_images as $k=>$v) {
+                    ?>
 
 
             <div class="col-md-2">
-                <a href="javascript:remove_image(<?php echo $v['request_image_id'];?>,<?php echo $this->request_detail['request_id'];?>)" onclick="return confirm('Are you sure you want to delete?')" ><i class="fa fa-times" aria-hidden="true"></i> </a>
+                <a href="javascript:remove_image(<?php echo $v['request_image_id']; ?>,<?php echo $this->request_detail['request_id']; ?>)" onclick="return confirm('Are you sure you want to delete?')" ><i class="fa fa-times" aria-hidden="true"></i> </a>
                 <div class="thumbnail">
 
-                    <a href="javascript:void(0)" onclick="view_image(<?php echo $sl;?>,<?php echo $v['request_image_id'];?>);"  data-toggle="modal" data-target="#myModal">
-                        <img src="/public/uploads/request/<?php echo $v['image_name'];?>" alt="Moustiers Sainte Marie" style="width:100%;height: 100px;">
+                    <a href="javascript:void(0)" onclick="view_image(<?php echo $sl; ?>,<?php echo $v['request_image_id']; ?>);"  data-toggle="modal" data-target="#myModal">
+                        <img src="/public/uploads/request/<?php echo $v['image_name']; ?>" alt="Moustiers Sainte Marie" style="width:100%;height: 100px;">
                         <div class="caption">
-                            <p>Image <?php echo $sl;?> </p>
+                            <p>Image <?php echo $sl; ?> </p>
                         </div>
                     </a>
                 </div>
             </div>
             <?php
                 $sl++;
-            }
+                }
             }
             ?>
             <!-- Modal -->
