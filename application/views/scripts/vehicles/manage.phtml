@@ -191,21 +191,28 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
             </div>
         </div>
 
-        <?php if($_SESSION['tranzgo_session']['account_id']==1) { ?>
+        <?php if ($_SESSION['tranzgo_session']['account_id']==1) {
+    ?>
             <div class="form-group">
                 <label for="pass2" class="control-label">Owner <span class="red">*</span></label>
                 <div class="input-container">
                     <select name="company_id" id="company_id">
                         <option value="">Select</option>
-                        <?php foreach($this->companyList as $k=>$v){?>
+                        <?php foreach ($this->companyList as $k=>$v) {
+        ?>
                             <option value="<?php echo $v['company_id']; ?>"
-                                <?php if($v['company_id']==$this->rental_detail['company_id']){ echo 'selected';} ?>><?php echo $v['company_name']; ?></option>
-                        <?php }?>
+                                <?php if ($v['company_id']==$this->rental_detail['company_id']) {
+            echo 'selected';
+        } ?>><?php echo $v['company_name']; ?></option>
+                        <?php
+    } ?>
                     </select>
                     <span class="error" id="err_company_id">&nbsp;</span>
                 </div>
             </div>
-        <?php }else {  ?>
+        <?php
+} else {
+        ?>
             <div class="form-group">
                 <label for="pass2" class="control-label">Owner <span class="red">*</span></label>
                 <div class="input-container">
@@ -215,26 +222,14 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
                     <span class="error" id="err_company_id">&nbsp;</span>
                 </div>
             </div>
-        <?php  } ?>
+        <?php
+    } ?>
 
             <div class="form-group">
-                <label for="pass2" class="control-label">Garage <span class="smalltext required"></label>
+                <label for="pass2" class="control-label">Garage<span class="smalltext required"></label>
                 <div class="input-container">
-                    <select name="garage_type_id" id="garage_type_id">
-                        <option value="">Select</option>
-                        <?php
-                        foreach($this->garage_types as $k=>$v)
-                        {
-                            ?>
-                            <option value="<?php echo $v['garage_type_id'];?>"
-                                <?php if($v['garage_type_id']==$this->rental_detail['garage_type_id']){ echo 'selected';} ?>
-                                ><?php echo $v['garage_type_name'];?></option>
-                        <?php
-                        }
-                        ?>
-
-                    </select>
-                    <span class="error" id="err_type">&nbsp;</span>
+                    <input type="text" placeholder="Garage" id="garage" name="garage" value="<?php echo $this->rental_detail['garage'] ? $this->rental_detail['garage'] : '' ?>">
+                    <span class="error" id="err_garage">&nbsp;</span>
                 </div>
             </div>
 
@@ -253,10 +248,14 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
                 <div class="input-container">
                     <select name="vehicle_type_id" id="vehicle_type_id">
                         <option value="">Select</option>
-                        <?php foreach($this->vehicleTypeList as $k=>$v){?>
+                        <?php foreach ($this->vehicleTypeList as $k=>$v) {
+        ?>
                             <option value="<?php echo $v['vehicle_type_id']; ?>"
-                                <?php if($v['vehicle_type_id']==$this->rental_detail['vehicle_type_id']){ echo 'selected';} ?>><?php echo $v['vehicle_type_name']; ?></option>
-                        <?php }?>
+                                <?php if ($v['vehicle_type_id']==$this->rental_detail['vehicle_type_id']) {
+            echo 'selected';
+        } ?>><?php echo $v['vehicle_type_name']; ?></option>
+                        <?php
+    }?>
                     </select>
                     <span class="error" id="err_type">&nbsp;</span>
                 </div>
@@ -269,11 +268,13 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
                     <select name="max_passenger" id="max_passenger">
                         <option value="">Select</option>
                         <?php
-                        foreach($this->vehicle_max_passenger as $k=>$v)
-                        {
-                         ?>
-                            <option value="<?php echo $v['max_passenger'];?>" <?php if($this->rental_detail['max_passenger']==$v['max_passenger']){ echo 'selected';} ?>><?php echo $v['max_passenger_values'];?></option>
-                        <?php } ?>
+                        foreach ($this->vehicle_max_passenger as $k=>$v) {
+                            ?>
+                            <option value="<?php echo $v['max_passenger']; ?>" <?php if ($this->rental_detail['max_passenger']==$v['max_passenger']) {
+                                echo 'selected';
+                            } ?>><?php echo $v['max_passenger_values']; ?></option>
+                        <?php
+                        } ?>
                     </select>
                     <span class="error" id="err_max_passenger">&nbsp;</span>
                 </div>
@@ -284,10 +285,14 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
                 <div class="input-container">
                     <select name="transmission_id" id="transmission_id">
                         <option value="">Select</option>
-                        <?php foreach($this->transmissionList as $k=>$v){?>
+                        <?php foreach ($this->transmissionList as $k=>$v) {
+                            ?>
                             <option value="<?php echo $v['transmission_id']; ?>"
-                                <?php if($v['transmission_id']==$this->rental_detail['transmission_id']){ echo 'selected';} ?>><?php echo $v['transmission_name']; ?></option>
-                        <?php }?>
+                                <?php if ($v['transmission_id']==$this->rental_detail['transmission_id']) {
+                                echo 'selected';
+                            } ?>><?php echo $v['transmission_name']; ?></option>
+                        <?php
+                        }?>
                     </select>
                     <span class="error" id="err_transmission_id">&nbsp;</span>
                 </div>
@@ -348,8 +353,12 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
                 <div class="input-container">
                     <select name="rental_status" id="rental_status">
                         <option value="">Select</option>
-                        <option value="1" <?php if($this->rental_detail['rental_status']==1 || !$this->rental_detail['rental_id']){ echo 'selected';} ?>>Active</option>
-                        <option value="0" <?php if($this->rental_detail['rental_status']==0 && $this->rental_detail['rental_id']){ echo 'selected';} ?>>Down</option>
+                        <option value="1" <?php if ($this->rental_detail['rental_status']==1 || !$this->rental_detail['rental_id']) {
+                            echo 'selected';
+                        } ?>>Active</option>
+                        <option value="0" <?php if ($this->rental_detail['rental_status']==0 && $this->rental_detail['rental_id']) {
+                            echo 'selected';
+                        } ?>>Down</option>
                     </select>
                     <span class="error" id="err_status">&nbsp;</span>
                 </div>
@@ -385,29 +394,27 @@ $array_max_passenger = array(1=>'1 - 4',2=>'4 - 7',3=>'8 - 11');
                 </div>
             </div>
             <?php
-            if(count($this->rental_images) > 0)
-            {
-            $sl=1;
-            foreach($this->rental_images as $k=>$v)
-            {
-            ?>
+            if (count($this->rental_images) > 0) {
+                $sl=1;
+                foreach ($this->rental_images as $k=>$v) {
+                    ?>
 
 
             <div class="col-md-2">
-                <a href="javascript:remove_image(<?php echo $v['rental_images_id'];?>,<?php echo $v['rental_id'];?>)" onclick="return confirm('Are you sure you want to delete?')" ><i class="fa fa-times" aria-hidden="true"></i> </a>
+                <a href="javascript:remove_image(<?php echo $v['rental_images_id']; ?>,<?php echo $v['rental_id']; ?>)" onclick="return confirm('Are you sure you want to delete?')" ><i class="fa fa-times" aria-hidden="true"></i> </a>
                 <div class="thumbnail">
 
-                    <a href="javascript:void(0)" onclick="view_image(<?php echo $sl;?>,<?php echo $v['rental_images_id'];?>);"  data-toggle="modal" data-target="#myModal">
-                        <img src="/public/uploads/rental/<?php echo $v['image_name'];?>" alt="Moustiers Sainte Marie" style="width:100%;height: 100px;">
+                    <a href="javascript:void(0)" onclick="view_image(<?php echo $sl; ?>,<?php echo $v['rental_images_id']; ?>);"  data-toggle="modal" data-target="#myModal">
+                        <img src="/public/uploads/rental/<?php echo $v['image_name']; ?>" alt="Moustiers Sainte Marie" style="width:100%;height: 100px;">
                         <div class="caption">
-                            <p>Image <?php echo $sl;?> </p>
+                            <p>Image <?php echo $sl; ?> </p>
                         </div>
                     </a>
                 </div>
             </div>
             <?php
                 $sl++;
-            }
+                }
             }
             ?>
             <!-- Modal -->
