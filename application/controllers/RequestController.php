@@ -849,38 +849,53 @@ class RequestController extends Zend_Controller_Action
                         $name = 'Remitted';
                     }
                 }else{
+
+                    # driver task is driver
+
                     if($driver_status_id==1)
                     {
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/2';
-                        $name = 'Garage Out';
+                        $name = 'Acnowledge as Driver';
                     }else if($driver_status_id==2)
                     {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/3';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/1';
-                        $name = 'On Location';
+                        $name = 'Driver In Garage';
                     }else if($driver_status_id==3)
                     {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/4';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/2';
-                        $name = 'Guest on Board';
+                        $name = 'Garage Out';
                     }else if($driver_status_id==4)
                     {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/5';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/3';
-                        $name = 'End of Trip';
+                        $name = 'On Location';
                     }else if($driver_status_id==5)
                     {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/6';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/4';
-                        $name = 'In Garage';
-                    }else{
+                        $name = 'Guest on Board';
+                    }else if($driver_status_id==6)
+                    {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/7';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/5';
+                        $name = 'End of Trip';
+                    }else if($driver_status_id==7)
+                    {
+                        $undo_available = true;
+                        $link = '/Request/manage/idd/'.$idd.'/driverstatus/8';
+                        $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/6';
+                        $name = 'In Garage';
+                    }else{
+                        $undo_available = true;
+                        $link = '/Request/manage/idd/'.$idd.'/driverstatus/9';
+                        $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/7';
                         $name = 'Remitted';
                     }
                 }
