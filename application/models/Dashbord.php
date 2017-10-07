@@ -501,10 +501,21 @@ class Dashbord extends Zend_Db_Table{
         return $ret['num'];
     }
 
+    public function get_user_driver_requests_status_change_logs($idd)
+    {
+        $select = $this->DB->select();
+        $select->from(array('r'=>'tranzgo_request'), array('*'));
+        $select->join(array('u'=>'tranzgo_user'), 'r.assigned_driver_1_id=u.user_id', array('user_fname', 'user_lname'));
+        $select->join(array('a'=>'tranzgo_driver_status_change_log'), 'r.assigned_driver_1_id=a.driver_id and r.request_id=a.request_id', array('*'));
+        $select->join(array('tds'=>'tranzgo_driver_status'), 'a.driver_status_id=tds.driver_status_id', array('status_name'));
+        $select->join(array('v'=>'tranzgo_rental'), 'r.vehicle_id=v.rental_id', array('assigned_vehicle_name'));
+        $select->join(array('c'=>'tranzgo_customers'), 'r.customer_id=c.customer_id', array('customer_name'));
+        $select->where('r.assigned_driver_1_id=?', $idd);
+        $select->order('r.request_id DESC');
+        $select->order('a.log_id');
 
-
-
-
+        return $this->DB->fetchAll($select);
+    }
 }
 
 ?>

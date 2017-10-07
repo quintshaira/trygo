@@ -52,7 +52,7 @@ class DownloadController extends Zend_Controller_Action
 
         $export_id = trim($this->_request->getParam('export_id',""));
         $tab_id = trim($this->_request->getParam('tab_id',""));
-
+        $user_id = trim($this->_request->getParam('user_id',""));
 
         $arr_export_settings = $ob_Downloadexcel->get_header_params($export_id);
 
@@ -107,14 +107,14 @@ class DownloadController extends Zend_Controller_Action
             }else{
                 $rows=$ob_Dashbord->get_for_remitted_rows($company_id,$TD_arr,0);
             }
-
+        }
+        else if($export_id==4)
+        {
+            $rows=$ob_Dashbord->get_user_driver_requests_status_change_logs($user_id);
         }
 
 
-
-
         $objPHPExcel = new PHPExcel();
-
 
         $CELL_ARRAY = $objPHPExcel->num_of_column(count($arr_export_settings['header']['colmn'])+5);
         $styleThinBlackBorderOutline = array(
@@ -125,8 +125,6 @@ class DownloadController extends Zend_Controller_Action
                 ),
             ),
         );
-        //$objPHPExcel->createSheet();
-
 
         $objPHPExcel->setActiveSheetIndex(0);
         foreach ($CELL_ARRAY as $k => $v)
@@ -142,41 +140,21 @@ class DownloadController extends Zend_Controller_Action
         $row_counter++;
 
         foreach ($rows as $k => $v) {
-            //print "<br>";
             $objPHPExcel->getActiveSheet()->setCellValue("$CELL_ARRAY[0]" . "$row_counter", $row_counter-1);
             foreach ($arr_export_settings['header']['colmn'] as $k1 => $v1) {
-                //print $v[$v1];print " ; ";
                 $v[$v1]=str_replace('|SN|',$row_counter-1,$v[$v1]);
                 $objPHPExcel->getActiveSheet()->setCellValue("$CELL_ARRAY[$k1]" . "$row_counter", $v[$v1]);
             }
             $row_counter++;
         }
-//exit;
-        $objPHPExcel->getActiveSheet()->setTitle($arr_export_settings['fname']);
 
+        $objPHPExcel->getActiveSheet()->setTitle($arr_export_settings['fname']);
 
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $arr_export_settings['fname'] . '.xls"');
         header('Cache-Control: max-age=0');
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         exit;
         //print "<pre>"; print_r($arr_export_settings); print "</pre>"; exit;
@@ -191,9 +169,8 @@ class DownloadController extends Zend_Controller_Action
             $arr_export_data_set=$ob_excelexport->get_all_MQ_record($quick_search, $arr_order, $MQ_id);
         }
 
-//exit;
+        //exit;
         $objPHPExcel = new PHPExcel();
-
 
         $CELL_ARRAY = $objPHPExcel->num_of_column(count($arr_export_settings['header']['colmn']));
         $styleThinBlackBorderOutline = array(
@@ -205,7 +182,6 @@ class DownloadController extends Zend_Controller_Action
             ),
         );
         //$objPHPExcel->createSheet();
-
 
         $objPHPExcel->setActiveSheetIndex(0);
         foreach ($CELL_ARRAY as $k => $v)

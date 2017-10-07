@@ -166,9 +166,36 @@ class Downloadexcel extends Zend_Db_Table{
         $arr_export_settings[3]['header']['title']['9'] = 'Remarks';
         $arr_export_settings[3]['header']['Width']['9'] = '15';
 
+
+
+        $arr_export_settings[4]['fname'] = 'Driver_request_logs';
+
+        $arr_export_settings[4]['header']['colmn']['0'] = 'request_id';
+        $arr_export_settings[4]['header']['title']['0'] = 'Request ID';
+        $arr_export_settings[4]['header']['Width']['0'] = '10';
+
+        $arr_export_settings[4]['header']['colmn']['1'] = 'assigned_vehicle_name';
+        $arr_export_settings[4]['header']['title']['1'] = 'Vehicle';
+        $arr_export_settings[4]['header']['Width']['1'] = '22';
+
+        $arr_export_settings[4]['header']['colmn']['2'] = 'customer_name';
+        $arr_export_settings[4]['header']['title']['2'] = 'Customer';
+        $arr_export_settings[4]['header']['Width']['2'] = '22';
+
+        $arr_export_settings[4]['header']['colmn']['3'] = 'user_fname';
+        $arr_export_settings[4]['header']['title']['3'] = 'Driver';
+        $arr_export_settings[4]['header']['Width']['3'] = '22';
+
+        $arr_export_settings[4]['header']['colmn']['4'] = 'status_name';
+        $arr_export_settings[4]['header']['title']['4'] = 'Status';
+        $arr_export_settings[4]['header']['Width']['4'] = '20';
+
+        $arr_export_settings[4]['header']['colmn']['5'] = 'date_time';
+        $arr_export_settings[4]['header']['title']['5'] = 'Date';
+        $arr_export_settings[4]['header']['Width']['5'] = '40';
+
         //print "<pre>"; print_r($arr_export_settings[$export_id]); print "</pre>";
         return $arr_export_settings[$export_id];
-
     }
 
 
