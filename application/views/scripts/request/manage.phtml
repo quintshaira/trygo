@@ -163,7 +163,6 @@
 
         if(err_vl!="")
         {return false;}
-
     }
 
     function view_image(sl,idd) {
@@ -201,7 +200,6 @@
         check_available_vehicles(rent_from,rent_to,didd);
         check_available_drivers1(rent_from,rent_to,didd);
         check_available_drivers2(rent_from,rent_to,didd);
-
 
         //check_validate_dates(didd);
         var package_id = $("#package_id").val().trim();
@@ -258,8 +256,6 @@
 
     }
 
-
-
     function check_available_vehicles(rent_from,rent_to,rental_id){
         var html = '<select name="rental_id" id="rental_id">';
         html += '<option value="">Select</option>';
@@ -283,9 +279,8 @@
                 $("#rental_id").val(rental_id);
             });
         //$('#rental_id option[value=13]').attr('selected','selected');
-
-
     }
+
     function check_available_drivers1(rent_from,rent_to,didd){
         var html = '<select name="assigned_driver_1_id" id="assigned_driver_1_id">';
         html += '<option value="">Select</option>';
@@ -304,8 +299,8 @@
             });
         //alert(didd);
         //$("#assigned_driver_1_id").val(didd);
-
     }
+
     function check_available_drivers2(rent_from,rent_to,didd){
         var html = '<select name="assigned_driver_2_id" id="assigned_driver_2_id">';
         html += '<option value="">Select</option>';
@@ -324,7 +319,45 @@
 
             });
         //$("#assigned_driver_2_id").val(didd);
+    }
 
+    function check_vehicle_package_types(rental_id){
+        var html = '<select name="package_type_id" id="package_type_id" onchange="calc_estimated_cost(this.value);">';
+        html += '<option value="">Select</option>';
+
+        $.ajax({
+            type: 'GET',
+            url: "/Request/checkvehiclepackagetypes/",
+            data: { rental_id:rental_id }
+        }).done(function(data) {
+            var t = JSON.parse(data);
+            for(var i=0; i<t.length; i++) {
+                html += '<option value="'+ t[i].package_type_id+'">'+t[i].package_type_name+'</option>';
+            }
+            $("#package_type_id").html(html);
+
+            var html = '<select name="package_id" id="package_id" onchange="calc_estimated_cost(this.value);">';
+            html += '<option value="">Select</option>';
+            $("#package_id").html(html);
+        });
+    }
+
+    function check_package_type_packages(package_type_id){
+        var html = '<select name="package_id" id="package_id" onchange="calc_estimated_cost(this.value);">';
+        html += '<option value="">Select</option>';
+
+        $.ajax({
+            type: 'GET',
+            url: "/Request/checkpackagetypepackages/",
+            data: { package_type_id:package_type_id }
+        }).done(function(data) {
+            var t = JSON.parse(data);
+            for(var i=0; i<t.length; i++) {
+                html += '<option value="'+ t[i].package_id+'">'+t[i].package_name+'</option>';
+            }
+
+            $("#package_id").html(html);
+        });
     }
 
     function change_validate(value)  {
@@ -360,28 +393,21 @@
         }
     }
 
-
     function currency_format(n) {
         return n.toFixed(2).replace(/./g, function(c, i, a) {
                 return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
             });
     }
 
-    function change_date(value)
-    {
+    function change_date(value) {
         //var no_of_days = $("#no_of_days").val().trim();
         var rent_from = $("#rent_from").val().trim();
         if(rent_from)
         callback();
 
     }
-
-
-
 </script>
 <style type="text/css">
-
-
     .typeahead {
         background-color: #FFFFFF;
 
@@ -419,7 +445,6 @@
 </style>
 <?php
 //echo $this->request_detail['assigned_driver_1_id'];
-
 ?>
 
 <div class="content-wrapper">
@@ -532,7 +557,7 @@
                 <div class="form-group">
                     <label for="pass2" class="control-label">Vehicle <span class="smalltext required"></label>
                     <div class="input-container">
-                        <select name="rental_id" id="rental_id">
+                        <select name="rental_id" id="rental_id" onchange="check_vehicle_package_types(this.value);">
                             <option value="">Select</option>
                             <?php foreach ($this->assignedVehicleList as $k=>$v) {
                         ?>
@@ -543,6 +568,24 @@
 
                         </select>
                         <span class="error" id="err_rental_id">&nbsp;</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pass2" class="control-label">Package Type <span class="smalltext required"></label>
+                    <div class="input-container">
+                        <select name="package_type_id" id="package_type_id" onchange="check_package_type_packages(this.value);">
+                            <option value="">Select</option>
+                            <?php foreach ($this->packageTypeList as $k=>$v) {
+                        ?>
+                                <option value="<?php echo $v['package_type_id']; ?>"
+                                    <?php if ($v['package_type_id']==$this->request_detail['package_type_id']) {
+                            echo 'selected';
+                        } ?>><?php echo $v['package_type_name']; ?></option>
+                            <?php
+                    } ?>
+                        </select>
+                        <span class="error" id="err_package_type_id">&nbsp;</span>
                     </div>
                 </div>
 
@@ -758,3 +801,4 @@
         </form>
     </div>
 </div>
+

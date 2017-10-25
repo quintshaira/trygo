@@ -28,6 +28,14 @@ class Request extends Zend_Db_Table
         $result = $this->DB->fetchAssoc($select);
         return $result;
     }
+    public function get_package_type()
+    {
+        $select = $this->DB->select();
+        $select->from(array('tpt' => "tranzgo_package_type"), array('package_type_id','package_type_name' ));
+        $select->where('tpt.status =?', 1);
+        $result = $this->DB->fetchAssoc($select);
+        return $result;
+    }
     public function get_package()
     {
         $select = $this->DB->select();
@@ -875,6 +883,31 @@ class Request extends Zend_Db_Table
             }
         }
         return $this->DB->fetchAll($select1);
+    }
+
+    public function get_vehicle_package_types($rental_id)
+    {
+        $select = $this->DB->select();
+        $select->from(array('tr' => "tranzgo_rental"), array('rental_id','vehicle_type_id'));
+        $select->where('tr.rental_id =?', $rental_id);
+        $result = $this->DB->fetchrow($select);
+
+        $vehicle_type_id = $result ? $result['vehicle_type_id'] : 0;
+
+        $select1 = $this->DB->select();
+        $select1->from(array('tpt' => "tranzgo_package_type"), array('package_type_id','package_type_name'));
+        $select1->where('tpt.vehicle_type_id =?', $vehicle_type_id);
+
+        return $this->DB->fetchAll($select1);
+    }
+
+    public function get_package_type_packages($package_type_id)
+    {
+        $select = $this->DB->select();
+        $select->from(array('tp' => "tranzgo_package"), array('package_id','package_name'));
+        $select->where('tp.package_type_id =?', $package_type_id);
+
+        return $this->DB->fetchAll($select);
     }
 
     public function get_request_list($idd)

@@ -219,15 +219,10 @@ class RequestController extends Zend_Controller_Action
         $status=   trim($this->_request->getParam('status', ''));
         $driverstatus=   trim($this->_request->getParam('driverstatus', ''));
 
-
-
-
         $ob_Request = new Request();
 
         $this->view->requestList=$ob_Request->get_request();
         $this->view->driverTaskList=$ob_Request->get_driver_task();
-        $this->view->packageList=$ob_Request->get_package();
-
         $this->view->requestRate=$ob_Request->get_request_rate();
         $this->view->paymentMethod=$ob_Request->get_payment_method();
 
@@ -245,6 +240,14 @@ class RequestController extends Zend_Controller_Action
             $this->view->assignedVehicleList=$ob_Request->get_assigned_vehicle();
             $this->view->companyList=$ob_User->get_company();
             $this->view->driverList=$ob_Request->get_driver_list();
+        }
+
+        if ($rentid) {
+            $this->view->packageTypeList=$packageTypes=$ob_Request->get_vehicle_package_types($rentid);
+            $this->view->packageList=$ob_Request->get_package_type_packages($packageTypes[0]['package_type_id']);
+        } else {
+            $this->view->packageTypeList=$ob_Request->get_package_type();
+            $this->view->packageList=$ob_Request->get_package();
         }
 
         $this->view->cancel_link = '/Request/'.$page;
@@ -941,7 +944,6 @@ class RequestController extends Zend_Controller_Action
         exit;
     }
 
-
     public function checkavailabevehicleAction()
     {
         /*$rent_from  = date('Y-m-d',strtotime(trim($this->_request->getParam('rent_from',''))));
@@ -958,6 +960,7 @@ class RequestController extends Zend_Controller_Action
         echo json_encode($ob_Request->check_exist_vehicle($rent_from, $rent_to, $company_id, $rental_id));
         exit;
     }
+
     public function checkavailabedrivers1Action()
     {
         $rent_from  = trim($this->_request->getParam('rent_from', ''));
@@ -983,6 +986,22 @@ class RequestController extends Zend_Controller_Action
         $ob_Request = new Request();
         $ret2 = $ob_Request->check_exist_drivers1($rent_from, $rent_to, $company_id, $didd);
         echo json_encode($ret2);
+        exit;
+    }
+
+    public function checkvehiclepackagetypesAction()
+    {
+        $rental_id = $this->_request->getParam('rental_id', '') ? trim($this->_request->getParam('rental_id', '')):0;
+        $ob_Request = new Request();
+        echo json_encode($ob_Request->get_vehicle_package_types($rental_id));
+        exit;
+    }
+
+    public function checkpackagetypepackagesAction()
+    {
+        $package_type_id = $this->_request->getParam('package_type_id', '') ? trim($this->_request->getParam('package_type_id', '')):0;
+        $ob_Request = new Request();
+        echo json_encode($ob_Request->get_package_type_packages($package_type_id));
         exit;
     }
 
