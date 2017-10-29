@@ -322,14 +322,14 @@
     }
 
     function check_vehicle_package_types(rental_id){
-        var html = '<select name="package_type_id" id="package_type_id" onchange="calc_estimated_cost(this.value);">';
-        html += '<option value="">Select</option>';
-
         $.ajax({
             type: 'GET',
             url: "/Request/checkvehiclepackagetypes/",
             data: { rental_id:rental_id }
         }).done(function(data) {
+            var html = '<select name="package_type_id" id="package_type_id" onchange="calc_estimated_cost(this.value);">';
+            html += '<option value="">Select</option>';
+
             var t = JSON.parse(data);
             for(var i=0; i<t.length; i++) {
                 html += '<option value="'+ t[i].package_type_id+'">'+t[i].package_type_name+'</option>';
@@ -343,14 +343,14 @@
     }
 
     function check_package_type_packages(package_type_id){
-        var html = '<select name="package_id" id="package_id" onchange="calc_estimated_cost(this.value);">';
-        html += '<option value="">Select</option>';
-
         $.ajax({
             type: 'GET',
             url: "/Request/checkpackagetypepackages/",
             data: { package_type_id:package_type_id }
         }).done(function(data) {
+            var html = '<select name="package_id" id="package_id" onchange="calc_estimated_cost(this.value);">';
+            html += '<option value="">Select</option>';
+            
             var t = JSON.parse(data);
             for(var i=0; i<t.length; i++) {
                 html += '<option value="'+ t[i].package_id+'">'+t[i].package_name+'</option>';

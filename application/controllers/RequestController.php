@@ -244,7 +244,10 @@ class RequestController extends Zend_Controller_Action
 
         if ($rentid) {
             $this->view->packageTypeList=$packageTypes=$ob_Request->get_vehicle_package_types($rentid);
-            $this->view->packageList=$ob_Request->get_package_type_packages($packageTypes[0]['package_type_id']);
+            $this->view->packageList = [];
+            if ($this->view->packageTypes) {
+                $this->view->packageList=$ob_Request->get_package_type_packages($packageTypes[0]['package_type_id']);
+            }
         } else {
             $this->view->packageTypeList=$ob_Request->get_package_type();
             $this->view->packageList=$ob_Request->get_package();
