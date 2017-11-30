@@ -328,8 +328,22 @@ class RequestController extends Zend_Controller_Action
                 $this->sessionAuth->msg_centre('Request updated');
             }
 
-            $this->_redirect('/Request/details/idd/'.$idd);
+            // Send email to coordinator of the company
+            $ob_User = new User();
+            $company_id = $_SESSION['tranzgo_session']['company_id'];
+            $account_id = '3';
+            $coordinators = $ob_User->getUsersByRole($company_id, $account_id);
 
+            foreach ($coordinators as $coordinator) {
+                $mail = new Zend_Mail('utf-8');
+                $mail->setBodyHtml('Hi!<br>A request has been approved.<br>');
+                $mail->setFrom('noreply.tranzgo@gmail.com', 'Tranzgo');
+                $mail->addTo($coordinator['email'], $coordinator['user_fname'] . ' ' . $coordinator['user_lname']);
+                $mail->setSubject('Tranzgo: Request approved');
+                $mail->send();
+            }
+
+            $this->_redirect('/Request/details/idd/'.$idd);
             //print "<pre>"; print_r($this->view->request_images); print "</pre>"; exit;
         }
 
@@ -788,51 +802,44 @@ class RequestController extends Zend_Controller_Action
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/3';
                         $name = 'Remitted';
                     }
-                }else{
+                } else {
 
                     # driver task is driver
 
-                    if($driver_status_id==1)
-                    {
+                    if ($driver_status_id==1) {
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/2';
                         $name = 'Acnowledge as Driver';
-                    }else if($driver_status_id==2)
-                    {
+                    } elseif ($driver_status_id==2) {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/3';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/1';
                         $name = 'Driver In Garage';
-                    }else if($driver_status_id==3)
-                    {
+                    } elseif ($driver_status_id==3) {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/4';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/2';
                         $name = 'Garage Out';
-                    }else if($driver_status_id==4)
-                    {
+                    } elseif ($driver_status_id==4) {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/5';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/3';
                         $name = 'On Location';
-                    }else if($driver_status_id==5)
-                    {
+                    } elseif ($driver_status_id==5) {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/6';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/4';
                         $name = 'Guest on Board';
-                    }else if($driver_status_id==6)
-                    {
+                    } elseif ($driver_status_id==6) {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/7';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/5';
                         $name = 'End of Trip';
-                    }else if($driver_status_id==7)
-                    {
+                    } elseif ($driver_status_id==7) {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/8';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/6';
                         $name = 'In Garage';
-                    }else{
+                    } else {
                         $undo_available = true;
                         $link = '/Request/manage/idd/'.$idd.'/driverstatus/9';
                         $bk_link = '/Request/manage/idd/'.$idd.'/driverstatus/7';
@@ -1162,4 +1169,3 @@ class RequestController extends Zend_Controller_Action
         $layout->setLayout('frontend/onecolumn');
     }
 }
-?>

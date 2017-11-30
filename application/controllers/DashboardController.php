@@ -25,16 +25,14 @@ class DashboardController extends Zend_Controller_Action
         Zend_Loader::loadClass('Signup');
         Zend_Loader::loadClass('Dashbord');
         Zend_Loader::loadClass('Request');
-        //Zend_Loader::loadClass('Sendemails');
-        //$Host = HOST;
-        //$Username = Username;
-        //$Password = Password;
-        //$Port = Port;
-        //$ob_Mail = new Sendemails();
-        //$ob_Mail->send_mail('test',$Host,$Username,$Password,$Port);
+        // Zend_Loader::loadClass('Sendemails');
+        // $Host = HOST;
+        // $Username = Username;
+        // $Password = Password;
+        // $Port = Port;
+        // $ob_Mail = new Sendemails();
+        // $ob_Mail->send_mail('test', $Host, $Username, $Password, $Port);
         //exit;
-
-
 
         //-----------------------------------------------authenticate logged in user---------------------------------------------//
         Zend_Loader::loadClass('LoginAuth');
@@ -256,6 +254,21 @@ class DashboardController extends Zend_Controller_Action
                 $is_assigned
             );
             $this->sessionAuth->msg_centre('Request updated successfully');
+        }
+
+        // Send email to booking officers of the company
+        $ob_User = new User();
+        $company_id = $_SESSION['tranzgo_session']['company_id'];
+        $account_id = '2';
+        $officers = $ob_User->getUsersByRole($company_id, $account_id);
+
+        foreach ($officers as $officer) {
+            $mail = new Zend_Mail('utf-8');
+            $mail->setBodyHtml('Hi!<br>You have a pending request for approval.<br>');
+            $mail->setFrom('noreply.tranzgo@gmail.com', 'Tranzgo');
+            $mail->addTo($officer['email'], $officer['user_fname'] . ' ' . $officer['user_lname']);
+            $mail->setSubject('Tranzgo: Request submit for Approval');
+            $mail->send();
         }
 
         //$this->view->tabshow=trim($this->_request->getParam('tabshow','1'));
