@@ -138,6 +138,7 @@ class Request extends Zend_Db_Table
                                 $rate_id,
                                 $rent_from,
                                 $no_of_days,
+                                $no_of_passengers,
                                 $rent_to,
                                 $delivery_address,
                                 $assigned_driver_1_id,
@@ -147,6 +148,7 @@ class Request extends Zend_Db_Table
                                 $estimated_price,
                                 $company_id,
                                 $note,
+                                $itinerary,
                                 $ses_user
     ) {
         $query = array(
@@ -158,6 +160,7 @@ class Request extends Zend_Db_Table
             'rate_id' => $rate_id,
             'rent_from'=>$rent_from,
             'no_of_days'=>$no_of_days,
+            'no_of_passengers'=>$no_of_passengers,
             'rent_to'=>$rent_to,
             'rent_from_date'=>date('Y-m-d', strtotime($rent_from)),
             'rent_to_date'=>date('Y-m-d', strtotime($rent_to)),
@@ -168,6 +171,7 @@ class Request extends Zend_Db_Table
             'payment_method_id'=>$payment_method_id,
             'estimated_price'=>$estimated_price,
             'note'=>$note,
+            'itinerary'=>$itinerary,
             'requested_by'=>$ses_user,
             'company_id'=>$company_id,
             'requested_date' => CD,
@@ -545,6 +549,7 @@ class Request extends Zend_Db_Table
                 'package_id',
                 'rate_id',
                 'note',
+                'itinerary',
                 'delivery_address',
                 'mod_date',
                 'pickup_address',

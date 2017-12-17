@@ -406,12 +406,15 @@ class RequestController extends Zend_Controller_Action
         $cust_id                = trim($this->_request->getParam('cust_id', ''));
         $contact_number         = trim($this->_request->getParam('contact_number', ''));
         $no_of_days             = trim($this->_request->getParam('no_of_days', 0));
+        $no_of_passengers       = trim($this->_request->getParam('no_of_passengers', 0));
+
         if (!$estimated_price) {
             $this->view->error_estimated_price = 'Invalid Estimated Price';
             $error = 1;
         }
 
         $note                   = trim($this->_request->getParam('note', ''));
+        $itinerary              = trim($this->_request->getParam('itinerary', ''));
 
         $ob_Request = new Request();
 
@@ -492,6 +495,7 @@ class RequestController extends Zend_Controller_Action
                     $rate_id,
                     $rent_from,
                     $no_of_days,
+                    $no_of_passengers,
                     $rent_to,
                     $delivery_address,
                     $assigned_driver_1_id,
@@ -501,6 +505,7 @@ class RequestController extends Zend_Controller_Action
                     $estimated_price,
                     $company_id,
                     $note,
+                    $itinerary,
                     $ses_user
                 );
                 $request_generated_id =  'CE '.$lastRequestId;

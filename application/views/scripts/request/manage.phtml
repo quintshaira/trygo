@@ -507,13 +507,19 @@
                     </div>
                 </div>
                 <div class="form-group" id="contact_no_div">
-                    <label for="uid">Customer Contact Number: <span class="red">*</span><br></label>
+                    <label for="uid">Contact Number: <span class="red">*</span><br></label>
                     <div class="input-container">
                         <input placeholder="Contact Number" id="contact_number" name="contact_number"  value=""/>
                         <span class="error" id="err_contact_number">&nbsp;</span>
                     </div>
                 </div>
-
+                <div class="form-group" id="no_of_passengers_div">
+                    <label for="uid">No. of Passengers:<br></label>
+                    <div class="input-container">
+                        <input placeholder="No of Passengers" id="no_of_passengers" name="no_of_passengers"  value=""/>
+                        <span class="error" id="err_no_of_passengers">&nbsp;</span>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="pass2" class="control-label">No. of Days <span class="red">*</span></label>
                     <div class="input-container">
@@ -728,11 +734,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="uid">Notes: <br></label>
+                    <label for="uid">Other Details: <br></label>
                     <div class="input-container">
                         <textarea class="form-control" placeholder="Notes" id="note"  name="note"><?php echo $this->request_detail['note'] ? $this->request_detail['note'] : '' ?></textarea>
                         <span class="error" id="err_note">&nbsp;</span>
 
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="uid">Itinerary: <br></label>
+                    <div class="input-container">
+                        <textarea class="form-control" placeholder="Itinerary" id="itinerary"  name="itinerary"><?php echo $this->request_detail['itinerary'] ? $this->request_detail['itinerary'] : '' ?></textarea>
+                        <span class="error" id="err_itinerary">&nbsp;</span>
                     </div>
                 </div>
             <?php
