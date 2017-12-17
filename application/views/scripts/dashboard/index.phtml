@@ -232,6 +232,15 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
             return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
         });
     }
+
+    function change_amounts(value)  {
+        due_amount = $("#due_amount1").val() || 0;
+        additional_charges = $("#additional_charges").val() || 0;
+        expenses = $("#expenses").val() || 0;
+
+        remitted_amount = parseFloat(due_amount) + parseFloat(additional_charges) - parseFloat(expenses);
+        $("#recieved_amount").val(remitted_amount);
+    }
 </script>
 <div class="content-wrapper">
     <h2 class="heading">Dashboard</h2>
@@ -1164,11 +1173,24 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="uid">Additional Charges: <br></label>
+                        <div class="input-container">
+                            <input class="form-control" type="text" placeholder="Additional Charges" name="additional_charges" id="additional_charges" value="0" onkeyup="change_amounts(this.value)">
+                            <span class="error" id="err_additional_charges">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="uid">Expenses: <br></label>
+                        <div class="input-container">
+                            <input class="form-control" type="text" placeholder="Expenses" name="expenses" id="expenses" value="0" onkeyup="change_amounts(this.value)">
+                            <span class="error" id="err_expenses">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="uid">Remitted Amount: <br></label>
                         <div class="input-container">
                             <input class="form-control" type="text" placeholder="Remitted Amount" name="recieved_amount" id="recieved_amount" value="">
                             <span class="error" id="err_remmited_amount">&nbsp;</span>
-
                         </div>
                     </div>
                     <div class="form-group">
@@ -1209,10 +1231,6 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                     }else{
                         $("#err_recieved_remarks").html('&nbsp;');
                     }
-                }else if(recieved_amount > due_amount1){
-                    error += '2';
-                    $("#err_recieved_remarks").html('&nbsp;');
-                    $("#err_remmited_amount").html('Remitted Amount must not be greater that Due Amount !');
                 }else{
                     $("#err_recieved_remarks").html('&nbsp;');
                     $("#err_remmited_amount").html('&nbsp;');

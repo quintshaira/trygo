@@ -54,22 +54,19 @@ class Downloadexcel extends Zend_Db_Table{
 
 
 
-        $arr_export_settings[2]['fname'] = 'Client_due_payment_TODAY';
+        $arr_export_settings[2]['fname'] = 'Ongoing';
 
         $arr_export_settings[2]['header']['colmn']['0'] = 'sn';
         $arr_export_settings[2]['header']['title']['0'] = '#';
         $arr_export_settings[2]['header']['Width']['0'] = '10';
 
-
         $arr_export_settings[2]['header']['colmn']['1'] = 'req_gen_id';
         $arr_export_settings[2]['header']['title']['1'] = 'ID';
         $arr_export_settings[2]['header']['Width']['1'] = '12';
 
-
         $arr_export_settings[2]['header']['colmn']['2'] = 'assigned_vehicle_name';
         $arr_export_settings[2]['header']['title']['2'] = 'Vehicle';
         $arr_export_settings[2]['header']['Width']['2'] = '22';
-
 
         $arr_export_settings[2]['header']['colmn']['3'] = 'customer_name';
         $arr_export_settings[2]['header']['title']['3'] = 'Renter';
@@ -79,15 +76,22 @@ class Downloadexcel extends Zend_Db_Table{
         $arr_export_settings[2]['header']['title']['4'] = 'Driver';
         $arr_export_settings[2]['header']['Width']['4'] = '10';
 
-
         $arr_export_settings[2]['header']['colmn']['5'] = 'estimated_price';
         $arr_export_settings[2]['header']['title']['5'] = 'Amount Due';
         $arr_export_settings[2]['header']['Width']['5'] = '15';
 
-
-        $arr_export_settings[2]['header']['colmn']['6'] = 'status_name';
-        $arr_export_settings[2]['header']['title']['6'] = 'Driver Status';
+        $arr_export_settings[2]['header']['colmn']['6'] = 'additional_charges';
+        $arr_export_settings[2]['header']['title']['6'] = 'Additional Charges';
         $arr_export_settings[2]['header']['Width']['6'] = '15';
+
+        $arr_export_settings[2]['header']['colmn']['7'] = 'expenses';
+        $arr_export_settings[2]['header']['title']['7'] = 'Expenses';
+        $arr_export_settings[2]['header']['Width']['7'] = '15';
+
+
+        $arr_export_settings[2]['header']['colmn']['8'] = 'status_name';
+        $arr_export_settings[2]['header']['title']['8'] = 'Driver Status';
+        $arr_export_settings[2]['header']['Width']['8'] = '15';
 
 
 
@@ -123,7 +127,7 @@ class Downloadexcel extends Zend_Db_Table{
          * */
 
 
-        $arr_export_settings[3]['fname'] = 'Client_due_payment_TODAY';
+        $arr_export_settings[3]['fname'] = 'Remitted';
 
         $arr_export_settings[3]['header']['colmn']['0'] = 'sn';
         $arr_export_settings[3]['header']['title']['0'] = '#';
@@ -162,9 +166,17 @@ class Downloadexcel extends Zend_Db_Table{
         $arr_export_settings[3]['header']['title']['8'] = 'Remitted Amount';
         $arr_export_settings[3]['header']['Width']['8'] = '15';
 
-        $arr_export_settings[3]['header']['colmn']['9'] = 'recieved_remarks';
-        $arr_export_settings[3]['header']['title']['9'] = 'Remarks';
+        $arr_export_settings[3]['header']['colmn']['9'] = 'additional_charges';
+        $arr_export_settings[3]['header']['title']['9'] = 'Additional Charges';
         $arr_export_settings[3]['header']['Width']['9'] = '15';
+
+        $arr_export_settings[3]['header']['colmn']['10'] = 'expenses';
+        $arr_export_settings[3]['header']['title']['10'] = 'Expenses';
+        $arr_export_settings[3]['header']['Width']['10'] = '15';
+
+        $arr_export_settings[3]['header']['colmn']['11'] = 'recieved_remarks';
+        $arr_export_settings[3]['header']['title']['11'] = 'Remarks';
+        $arr_export_settings[3]['header']['Width']['11'] = '15';
 
 
 

@@ -193,6 +193,8 @@ class Dashbord extends Zend_Db_Table{
                 'customer_id',
                 'estimated_price',
                 'recieved_amount',
+                'additional_charges',
+                'expenses',
                 'sn'=>new Zend_Db_Expr("'|SN|'")
             ));
         $select->joinleft(array('tu'=>'tranzgo_rental'),'tu.rental_id=tr.vehicle_id',array('assigned_vehicle_name'));
@@ -251,6 +253,8 @@ class Dashbord extends Zend_Db_Table{
                 'customer_id',
                 'estimated_price',
                 'recieved_amount',
+                'additional_charges',
+                'expenses',
                 'recieved_remarks',
                 'sn'=>new Zend_Db_Expr("'|SN|'")
             ));

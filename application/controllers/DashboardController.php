@@ -55,7 +55,6 @@ class DashboardController extends Zend_Controller_Action
 
     public function indexAction()
     {
-
         //phpinfo();
         //echo '<pre>'; print_r($_SESSION); exit;
         $company_id=$_SESSION['tranzgo_session']['company_id'];
@@ -195,6 +194,8 @@ class DashboardController extends Zend_Controller_Action
     {
         $company_id         = $_SESSION['tranzgo_session']['company_id'];
         $updateid           = trim($this->_request->getParam('updateid', ''));
+        $additional_charges = trim($this->_request->getParam('additional_charges',''));
+        $expenses           = trim($this->_request->getParam('expenses',''));
         $recieved_amount    = trim($this->_request->getParam('recieved_amount', ''));
         $recieved_remarks   = trim($this->_request->getParam('recieved_remarks', ''));
         $tab   = trim($this->_request->getParam('tabs', ''));
@@ -203,6 +204,8 @@ class DashboardController extends Zend_Controller_Action
             'recieved_remarks'=>$recieved_remarks,
             'received_on'=>CD,
             'received_by'=>$_SESSION['tranzgo_session']['user_id'],
+            'additional_charges'=>$additional_charges,
+            'expenses'=>$expenses,
             'driver_status_id'=>8
         );
 
