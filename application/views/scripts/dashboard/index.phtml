@@ -256,10 +256,7 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
 } ?>><a href="#tab1" data-toggle="tab">TODAY</a></li>
                 <li <?php if ($this->tabshow==2) {
         ?>class="active" <?php
-    } ?>><a href="#tab2" data-toggle="tab">MTD</a></li>
-                <li <?php if ($this->tabshow==3) {
-        ?>class="active" <?php
-    } ?>><a href="#tab3" data-toggle="tab">YTD</a></li>
+    } ?>><a href="#tab3" data-toggle="tab">MTD</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane <?php if ($this->tabshow==1) {
@@ -662,7 +659,7 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                 <?php
                         } else {
                             ?>
-                <h2 class="sub-title">For Assignment
+                <h2 class="sub-title">For Assignment:
                        <span class="pull-right custom_track_padding_b">
 <!--                            <a href="#" class="btn btn-default">Manage categories</a>-->
                             <a href="/Download/listexporttoexcelall/export_id/1/tab_id/2" class="btn btn-default">Export To EXCEL</a>
@@ -721,7 +718,7 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                         } ?>
 
                 <div class="spacer"></div>
-                <h2 class="sub-title">Overdue Payment:
+                <h2 class="sub-title">Overdue:
                        <span class="pull-right custom_track_padding_b">
                             <a href="#" class="btn btn-default" style="cursor : default;"><?php print $mtot_outst ? number_format($mtot_outst, 2, '.', ',') : '0.00'; ?></a>
                             <a href="/Download/listexporttoexcelall/export_id/2/tab_id/2" class="btn btn-default">Export To EXCEL</a>
@@ -950,7 +947,7 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                 <?php
                     } else {
                         ?>
-                <h2 class="sub-title">For Assignment
+                <h2 class="sub-title">For Assignment:
                        <span class="pull-right custom_track_padding_b">
 <!--                            <a href="#" class="btn btn-default">Manage categories</a>-->
                             <a href="/Download/listexporttoexcelall/export_id/1/tab_id/3" class="btn btn-default">Export To EXCEL</a>
@@ -1009,7 +1006,7 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                     } ?>
 
                 <div class="spacer"></div>
-                <h2 class="sub-title">Overdue Payment:
+                <h2 class="sub-title">Overdue:
                        <span class="pull-right custom_track_padding_b">
                             <a href="#" class="btn btn-default" style="cursor : default;"><?php print $ytot_outst ? number_format($ytot_outst, 2, '.', ','): '0.00'; ?></a>
                             <a href="/Download/listexporttoexcelall/export_id/2/tab_id/3" class="btn btn-default">Export To EXCEL</a>
@@ -1096,7 +1093,7 @@ foreach ($this->YTD_remitted_rows as $k=>$v) {
                         <th><?php print $this->ob_LoginAuth->set_excel_header('Details');?><?php print $this->page_sorting_images['package_name']; ?></th>
                         <th><?php print $this->ob_LoginAuth->set_excel_header('Renter');?><?php print $this->page_sorting_images['car_type']; ?></th>
                         <th><?php print $this->ob_LoginAuth->set_excel_header('Driver');?><?php print $this->page_sorting_images['driver_type']; ?></th>
-                        <th><?php print $this->ob_LoginAuth->set_excel_header('Remitted Amount');?><?php print $this->page_sorting_images['recieved_amount']; ?></th>
+                        <th><?php print $this->ob_LoginAuth->set_excel_header('Remitted');?><?php print $this->page_sorting_images['recieved_amount']; ?></th>
                         <th><?php print $this->ob_LoginAuth->set_excel_header('Received By');?><?php print $this->page_sorting_images['car_type']; ?></th>
                         <th><?php print $this->ob_LoginAuth->set_excel_header('Received On');?><?php print $this->page_sorting_images['car_type']; ?></th>
                     </tr>

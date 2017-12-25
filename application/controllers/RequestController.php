@@ -445,6 +445,7 @@ class RequestController extends Zend_Controller_Action
                         $rate_id,
                         $rent_from,
                         $no_of_days,
+                        $no_of_passengers,
                         $rent_to,
                         $delivery_address,
                         $assigned_driver_1_id,
@@ -454,6 +455,7 @@ class RequestController extends Zend_Controller_Action
                         $estimated_price,
                         $company_id,
                         $note,
+                        $itinerary,
                         $ses_user,
                         $idd
                     );
@@ -534,125 +536,6 @@ class RequestController extends Zend_Controller_Action
     }
 
 
-
-    /*public function do_upload_file($file)
-    {
-        $dest = 'request/';
-
-        $file_name  = $file['name'];
-        $file_size  = $file['size'];
-        $file_tmp   = $file['tmp_name'];
-        $file_type  = $file['type'];
-        $file_ext=strtolower(end(explode('.',$file['name'])));
-        $str = '';
-        foreach($this->extensions as $k=>$v)
-        {
-            $str .=  $v.',';
-
-        }
-
-        $str = rtrim($str,',');
-
-
-        if(in_array($file_ext,$this->extensions)=== false){
-            $error['error_1']="Only ".$str.' are allowed';
-        }else if($file_size > MAX_IMAGE_SIZE ||  $file_size < MIN_IMAGE_SIZE) // 2100000 byte = 2 mb  102400 byte = 100 kb
-        {
-            $error['error_2']=" File size must be within 100 kb to 2 mb";
-        }
-
-
-
-
-        if(count($error) ==0) {
-
-
-            // FOR BIG SAVE
-            $bigFile = explode("x",Big);
-            $bW = $bigFile[0];
-            $bH = $bigFile[1];
-            if($dest)
-            {
-                $pathBig = ImageUploadPath.$dest."/big";
-            }
-
-
-
-            // For Medium
-            $mediumFile = explode("x",Medium);
-            $mW = $mediumFile[0];
-            $mH = $mediumFile[1];
-            if($dest)
-            {
-                $pathMedium = ImageUploadPath.$dest."/medium";
-            }
-
-
-            // For Small
-            $smallFile = explode("x",Small);
-            $sW = $smallFile[0];
-            $sH = $smallFile[1];
-            if($dest)
-            {
-                $pathSmall = ImageUploadPath.$dest."/small";
-            }
-
-
-            // For Icon
-            $iconFile = explode("x",Icon);
-            $iW = $iconFile[0];
-            $iH = $iconFile[1];
-            if($dest)
-            {
-                $pathIcon = ImageUploadPath.$dest."/icon";
-            }
-
-
-
-
-            // Rename File AND Upload
-            $newfilename = round(microtime(true)) . '.' .$file_ext;
-            //@unlink(ImageUploadPath."livefeed/".$livefeed_cat_details_details['image'].'.'.$livefeed_cat_details_details['img_ext']); // correct
-            if($dest)
-            {
-                move_uploaded_file($file_tmp,ImageUploadPath.$dest."/".$newfilename);
-                $image = new Image(ImageUploadPath. $dest . "/" . $newfilename);
-
-                // Save Big File
-                $image->resize($bW, $bH);
-                $newfilename = round(microtime(true)) . '_' . Big;
-                $image->save($newfilename, $pathBig);
-
-                // Save Medium File
-                $image->resize($mW, $mH);
-                $newfilename = round(microtime(true)) . '_' . Medium;
-                $image->save($newfilename, $pathMedium);
-
-                // Save Small File
-                $image->resize($sW, $sH);
-                $newfilename = round(microtime(true)) . '_' . Small;
-                $image->save($newfilename, $pathSmall);
-
-                // Save Icon File
-                $image->resize($iW, $iH);
-                $newfilename = round(microtime(true)) . '_' . Icon;
-                $image->save($newfilename, $pathIcon);
-
-
-                $data['image'] = explode("_",$newfilename)[0];
-                $data['img_ext'] = $file_ext;
-                return $data;
-            }else{
-                $data['image'] = '';
-                $data['img_ext'] = '';
-                return $data;
-            }
-        }else{
-
-            return $error;
-        }
-
-    }*/
 
 
     public function slugifyAction($text)
