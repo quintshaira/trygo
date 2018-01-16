@@ -649,13 +649,13 @@ class Request extends Zend_Db_Table
     {
         $select = $this->DB->select();
         $select->from(array('tr'=>'tranzgo_request'), array('request_id','company_id','vehicle_id'));
-        $select->where("'$rent_from'<>tr.rent_from");
-        $select->where("'$rent_from'<>tr.rent_to");
-        $select->where("'$rent_to'<>tr.rent_from");
-        $select->where("'$rent_to'<>tr.rent_to");
-        $select->where("'$rent_from' NOT BETWEEN tr.rent_from AND tr.rent_to");
-        $select->where("'$rent_to' NOT BETWEEN tr.rent_from AND tr.rent_to");
-        $select->where("'$rent_from' < tr.rent_from AND '$rent_to'< tr.rent_from OR '$rent_from' > tr.rent_to AND '$rent_to' > tr.rent_to");
+        $select->where("'$rent_from'<> tr.rent_from");
+        $select->where("'$rent_from'<> DATE_ADD(tr.rent_to, INTERVAL 3 HOUR)");
+        $select->where("'$rent_to'<> tr.rent_from");
+        $select->where("'$rent_to'<> DATE_ADD(tr.rent_to, INTERVAL 3 HOUR)");
+        $select->where("'$rent_from' NOT BETWEEN tr.rent_from AND DATE_ADD(tr.rent_to, INTERVAL 3 HOUR)");
+        $select->where("'$rent_to' NOT BETWEEN tr.rent_from AND DATE_ADD(tr.rent_to, INTERVAL 3 HOUR)");
+        $select->where("'$rent_from' < tr.rent_from AND '$rent_to'< tr.rent_from OR '$rent_from' > DATE_ADD(tr.rent_to, INTERVAL 3 HOUR) AND '$rent_to' > DATE_ADD(tr.rent_to, INTERVAL 3 HOUR)");
         $select->where("tr.is_delete=?", 0);
         //echo $select;exit;
         if ($company_id) {
