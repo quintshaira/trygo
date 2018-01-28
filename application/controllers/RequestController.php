@@ -405,7 +405,8 @@ class RequestController extends Zend_Controller_Action
         $company_id             = trim($this->_request->getParam('company', ''));
         $cust_id                = trim($this->_request->getParam('cust_id', ''));
         $contact_number         = trim($this->_request->getParam('contact_number', ''));
-        $no_of_days             = trim($this->_request->getParam('no_of_days', 0));
+        //$no_of_days           = trim($this->_request->getParam('no_of_days', 0));
+        $no_of_days             = 0;
         $no_of_passengers       = trim($this->_request->getParam('no_of_passengers', 0));
 
         if (!$estimated_price) {

@@ -215,6 +215,7 @@ class Request extends Zend_Db_Table
                                 $estimated_price,
                                 $company_id,
                                 $note,
+                                $itinerary,
                                 $ses_user,
                                 $idd
     ) {
@@ -270,8 +271,6 @@ class Request extends Zend_Db_Table
                 'mod_date' => CD,
             );
         }
-
-
 
         $this->DB->update('tranzgo_request', $query, array("request_id=$idd"));
         return true;
@@ -576,7 +575,8 @@ class Request extends Zend_Db_Table
         $select->joinleft(array('trt'=>'tranzgo_request_rate'), 'trt.request_rate_id=tr.rate_id', array('request_rate_name','request_rate_status'));
         $select->joinleft(array('tpm'=>'tranzgo_payment_method'), 'tr.payment_method_id=tpm.payment_method_id', array('payment_method_name','payment_method_status'));
         $select->joinleft(array('tdt'=>'tranzgo_driver_tasks'), 'tr.driver_task_id=tdt.driver_task_id', array('driver_task_name','driver_task_status'));
-        $select->joinleft(array('tav'=>'tranzgo_assigned_vehicle'), 'tr.vehicle_id=tav.assigned_vehicle_id', array('assigned_vehicle_name','assigned_vehicle_status'));
+        //$select->joinleft(array('tav'=>'tranzgo_assigned_vehicle'), 'tr.vehicle_id=tav.assigned_vehicle_id', array('assigned_vehicle_name','assigned_vehicle_status'));
+        $select->joinleft(array('tav'=>'tranzgo_rental'), 'tr.vehicle_id=tav.rental_id', array('assigned_vehicle_name'));
         $select->joinleft(array('tc'=>'tranzgo_company'), 'tr.company_id=tc.company_id', array('company_name'));
         $select->joinleft(array('tcu'=>'tranzgo_customers'), 'tr.customer_id=tcu.customer_id', array('customer_name','contact_number'));
 

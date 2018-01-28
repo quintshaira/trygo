@@ -12,7 +12,7 @@
         var company = $("#company").val().trim();
         var contact_number = $("#contact_number").val().trim();
         var cust_id = $("#cust_id").val().trim();
-        var no_of_days = $("#no_of_days").val().trim();
+        //var no_of_days = $("#no_of_days").val().trim();
 
 
 
@@ -151,13 +151,13 @@
             $("#err_contact_number").html("&nbsp;");
         }
 
-        if(!no_of_days)
-        {
-            err_vl += '18';
-            $("#err_no_of_days").html("No of days is mandatory");
-        }else{
-            $("#err_no_of_days").html("&nbsp;");
-        }
+        // if(!no_of_days)
+        // {
+        //     err_vl += '18';
+        //     $("#err_no_of_days").html("No of days is mandatory");
+        // }else{
+        //     $("#err_no_of_days").html("&nbsp;");
+        // }
 
 
 
@@ -209,22 +209,23 @@
     function chk_dates_validate() {
         var package_id = $("#package_id").val().trim();
         var rent_from = $("#rent_from").val().trim();
-        var no_of_days = $("#no_of_days").val().trim();
-        var date = new Date(rent_from);
-        var newdate = new Date(date);
-        newdate.setDate(newdate.getDate() + no_of_days*1);
-        var d = newdate.getDate();
-        var m = newdate.getMonth() + 1;
-        var y = newdate.getFullYear();
-        var h = newdate.getHours();
-        var n = newdate.getMinutes();
+        var rent_to = $("#rent_to").val().trim();
+        // var no_of_days = $("#no_of_days").val().trim();
+        // var date = new Date(rent_from);
+        // var newdate = new Date(date);
+        // newdate.setDate(newdate.getDate() + no_of_days*1);
+        // var d = newdate.getDate();
+        // var m = newdate.getMonth() + 1;
+        // var y = newdate.getFullYear();
+        // var h = newdate.getHours();
+        // var n = newdate.getMinutes();
 
-        d = d<10 ? ("0" + d) : d; // day
-        m = m<10 ? ("0" + m) : m; // month
-        h = h<10 ? ("0" + h) : h; // hour
-        n = n<10 ? ("0" + n) : n; // minute
-        var rent_to = y+'-'+m+'-'+d+' '+h+':'+n;
-        $("#rent_to").val(rent_to);
+        // d = d<10 ? ("0" + d) : d; // day
+        // m = m<10 ? ("0" + m) : m; // month
+        // h = h<10 ? ("0" + h) : h; // hour
+        // n = n<10 ? ("0" + n) : n; // minute
+        // var rent_to = y+'-'+m+'-'+d+' '+h+':'+n;
+        //$("#rent_to").val(rent_to);
 
         if(rent_to && rent_from)
         {
@@ -516,17 +517,17 @@
                 <div class="form-group" id="no_of_passengers_div">
                     <label for="uid">No. of Passengers:<br></label>
                     <div class="input-container">
-                        <input placeholder="No of Passengers" id="no_of_passengers" name="no_of_passengers"  value=""/>
+                        <input placeholder="No of Passengers" id="no_of_passengers" name="no_of_passengers"  value="<?php echo $this->request_detail['no_of_passengers'] ? $this->request_detail['no_of_passengers'] : $this->no_of_passengers ?>"/>
                         <span class="error" id="err_no_of_passengers">&nbsp;</span>
                     </div>
                 </div>
-                <div class="form-group">
+               <!--  <div class="form-group">
                     <label for="pass2" class="control-label">No. of Days <span class="red">*</span></label>
                     <div class="input-container">
                         <input class="form-control text-center" id="no_of_days" name="no_of_days" autocomplete="off" onkeyup="change_date();" onchange="change_date();" value="<?php echo $this->request_detail['no_of_days'] ? $this->request_detail['no_of_days'] : $this->no_of_days ?>"   data-rule="requested"  type="number" min="0" >
                         <span class="error" id="err_no_of_days">&nbsp;</span>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <label for="uid">Rent From: <span class="red">*</span><br></label>
@@ -555,7 +556,11 @@
                 <div class="form-group">
                     <label for="uid">Rent To: <span class="red">*</span><br></label>
                     <div class="input-container">
-                            <input class="form-control" placeholder="Rent To" readonly type="text" id="rent_to" name="rent_to" value="<?php echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : $this->to ?>">
+                        <div class="input-group date form_datetime col-md-8" id="rent_to_div">
+                            <input class="form-control" placeholder="Rent To" type="text" id="rent_to"  onblur="chk_dates_validate()" name="rent_to" value="<?php echo $this->request_detail['rent_to'] ? $this->request_detail['rent_to'] : '' ?>">
+                            <span class="input-group-addon"><i class="fa fa-times" aria-hidden="true"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
                         <span class="error" id="err_rent_to">&nbsp;</span>
                     </div>
                 </div>
