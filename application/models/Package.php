@@ -43,8 +43,6 @@ class Package extends Zend_Db_Table{
             $select->where("tp.company_id =?",$comp_id);
         }
 
-       //echo $select;exit;
-
         if($quick_search)
         {
 
@@ -59,7 +57,6 @@ class Package extends Zend_Db_Table{
         {
             $select->limitPage($arr_limit['page'], $arr_limit['limit']);
         }
-        //print $select;exit;
 
         $result = $this->DB->fetchAll($select);
 
@@ -86,17 +83,15 @@ class Package extends Zend_Db_Table{
             $select->where("tp.company_id =?",$comp_id);
         }
 
-
         if($quick_search)
         {
 
             $select->where("
             tp.package_name like '%$quick_search%' or
             tu.user_fname like '%$quick_search%' or
-            tu.user_lname like '%$quick_search%''");
+            tu.user_lname like '%$quick_search%'");
         }
 
-        //print $select; exit;
         $ret=$this->DB->fetchrow($select);
         return $ret['num'];
     }
