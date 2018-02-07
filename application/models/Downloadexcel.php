@@ -1,6 +1,6 @@
 <?php
-class Downloadexcel extends Zend_Db_Table{
-
+class Downloadexcel extends Zend_Db_Table
+{
     public $DB;
 
     public function __construct()
@@ -206,10 +206,32 @@ class Downloadexcel extends Zend_Db_Table{
         $arr_export_settings[4]['header']['title']['5'] = 'Date';
         $arr_export_settings[4]['header']['Width']['5'] = '40';
 
+
+        $arr_export_settings[5]['fname'] = 'Customer_logs';
+
+        $arr_export_settings[5]['header']['colmn']['0'] = 'company_name';
+        $arr_export_settings[5]['header']['title']['0'] = 'Company';
+        $arr_export_settings[5]['header']['Width']['0'] = '20';
+
+        $arr_export_settings[5]['header']['colmn']['1'] = 'customer_name';
+        $arr_export_settings[5]['header']['title']['1'] = 'First Name';
+        $arr_export_settings[5]['header']['Width']['1'] = '20';
+
+        $arr_export_settings[5]['header']['colmn']['2'] = 'contact_number';
+        $arr_export_settings[5]['header']['title']['2'] = 'Contact Number';
+        $arr_export_settings[5]['header']['Width']['2'] = '20';
+
+        $arr_export_settings[5]['header']['colmn']['3'] = 'added_by_name';
+        $arr_export_settings[5]['header']['title']['3'] = 'Added By';
+        $arr_export_settings[5]['header']['Width']['3'] = '20';
+
+        $arr_export_settings[5]['header']['colmn']['4'] = 'add_date';
+        $arr_export_settings[5]['header']['title']['4'] = 'Add Date';
+        $arr_export_settings[5]['header']['Width']['4'] = '20';
+
         //print "<pre>"; print_r($arr_export_settings[$export_id]); print "</pre>";
         return $arr_export_settings[$export_id];
     }
-
 
     public function aboutQuarter($mq_id)
     {
@@ -222,7 +244,4 @@ class Downloadexcel extends Zend_Db_Table{
             )
         );
     }
-
 }
-
-?>
