@@ -229,6 +229,37 @@ class Downloadexcel extends Zend_Db_Table
         $arr_export_settings[5]['header']['title']['4'] = 'Add Date';
         $arr_export_settings[5]['header']['Width']['4'] = '20';
 
+
+        $arr_export_settings[6]['fname'] = 'Driver_updates_logs';
+
+        $arr_export_settings[6]['header']['colmn']['0'] = 'req_gen_id';
+        $arr_export_settings[6]['header']['title']['0'] = 'Request ID';
+        $arr_export_settings[6]['header']['Width']['0'] = '20';
+
+        $arr_export_settings[6]['header']['colmn']['1'] = 'customer_name';
+        $arr_export_settings[6]['header']['title']['1'] = 'Customer';
+        $arr_export_settings[6]['header']['Width']['1'] = '20';
+
+        $arr_export_settings[6]['header']['colmn']['2'] = 'rent_from';
+        $arr_export_settings[6]['header']['title']['2'] = 'Rent From';
+        $arr_export_settings[6]['header']['Width']['2'] = '20';
+
+        $arr_export_settings[6]['header']['colmn']['3'] = 'rent_to';
+        $arr_export_settings[6]['header']['title']['3'] = 'Rent To';
+        $arr_export_settings[6]['header']['Width']['3'] = '20';
+
+        $arr_export_settings[6]['header']['colmn']['4'] = 'user_fname';
+        $arr_export_settings[6]['header']['title']['4'] = 'Driver';
+        $arr_export_settings[6]['header']['Width']['4'] = '20';
+
+        $arr_export_settings[6]['header']['colmn']['5'] = 'status_name';
+        $arr_export_settings[6]['header']['title']['5'] = 'Status';
+        $arr_export_settings[6]['header']['Width']['5'] = '20';
+
+        $arr_export_settings[6]['header']['colmn']['6'] = 'date_time';
+        $arr_export_settings[6]['header']['title']['6'] = 'Date';
+        $arr_export_settings[6]['header']['Width']['6'] = '20';
+
         //print "<pre>"; print_r($arr_export_settings[$export_id]); print "</pre>";
         return $arr_export_settings[$export_id];
     }

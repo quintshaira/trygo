@@ -1057,4 +1057,48 @@ class RequestController extends Zend_Controller_Action
         $layout = $this->_helper->layout();
         $layout->setLayout('frontend/onecolumn');
     }
+
+    public function reportAction()
+    {
+        $this->view->count_print = $no_records = 0;
+        $this->view->ses_user= $ses_user =$_SESSION['tranzgo_session']['user_id'];
+        $this->view->ses_role= $ses_role =$_SESSION['tranzgo_session']['account_id'];
+        $this->view->company_id= $company_id = $_SESSION['tranzgo_session']['company_id'];
+
+        $ob_Request = new Request();
+
+        $this->view->num_row    = $num_row   = trim($this->_request->getParam('num_row', LIMIT));
+        $this->view->page       = $page      = trim($this->_request->getParam('page', 1));
+        $this->view->order_col  = $order_col = trim($this->_request->getParam('order_col', 'log_id'));
+        $this->view->order_typ  = $order_typ = trim($this->_request->getParam('order_typ', 'DESC'));
+
+        $arr_limit = array();
+        $arr_limit['limit'] = $limit = ($num_row > 0) ? $num_row : 0;
+        $arr_limit['page'] = $page;
+
+        $arr_order = array();
+        $arr_order['col'] = $order_col;
+        $arr_order['typ'] = $order_typ;
+
+        if ($_POST) {
+            $this->view->rent_from = $rent_from = $this->_request->getParam('rent_from', '') ? trim($this->_request->getParam('rent_from', '')):0;
+            $this->view->rent_to = $rent_to = $this->_request->getParam('rent_to', '') ? trim($this->_request->getParam('rent_to', '')): 0;
+            
+            $status = 1;
+            $row_count = 0;
+            $this->view->driver_rows = $ob_Request->request_driver_status_change_log($rent_from, $rent_to, $status, $arr_limit, $arr_order);
+            $row_count = $ob_Request->request_driver_status_change_log_count($rent_from, $rent_to, $status);
+
+            $arr_rows = array('req_gen_id', 'user_id', 'user_fname', 'user_lname');
+            $this->view->page_sorting_images = $this->sessionAuth->get_sorting_html($arr_rows, $arr_order);
+            $this->view->page_peginetion = $this->sessionAuth->get_peginetion($row_count, $page, $num_row);
+
+            $this->view->count_print = count($this->view->driver_rows);
+
+            $this->view->count_rows = $row_count;
+        }
+
+        $layout = $this->_helper->layout();
+        $layout->setLayout('frontend/onecolumn');
+    }
 }

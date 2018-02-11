@@ -1031,8 +1031,8 @@ class Request extends Zend_Db_Table
     {
         $select = $this->DB->select();
         $select->from(array('a'=>'tranzgo_driver_status_change_log'), array('*'));
-        $select->joinleft(array('tds'=>'tranzgo_driver_status'), 'tds.driver_status_id=a.driver_status_id', array('status_name'));
-        $select->joinleft(array('u'=>'tranzgo_user'), 'u.user_id=a.driver_id', array('user_fname','user_lname'));
+        $select->joinleft(array('tds'=>'tranzgo_driver_status'), 'tds.driver_status_id = a.driver_status_id', array('status_name'));
+        $select->joinleft(array('u'=>'tranzgo_user'), 'u.user_id = a.driver_id', array('user_fname', 'user_lname'));
         $select->where('a.request_id=?', $idd);
         $select->order('log_id DESC');
 
@@ -1041,9 +1041,53 @@ class Request extends Zend_Db_Table
         return $this->DB->fetchAssoc($select);
     }
 
+    public function request_driver_status_change_log($date_from, $date_to, $status, $arr_limit, $arr_order)
+    {
+        $select = $this->DB->select();
+        $select->from(array('a'=>'tranzgo_driver_status_change_log'), array('*'));
+        $select->joinleft(array('tr'=>'tranzgo_request'), 'a.request_id = tr.request_id', array('request_id', 'req_gen_id', 'rent_from', 'rent_to'));
+        $select->joinleft(array('tds'=>'tranzgo_driver_status'), 'tds.driver_status_id = a.driver_status_id', array('status_name'));
+        $select->joinleft(array('u'=>'tranzgo_user'), 'u.user_id = a.driver_id', array('user_fname','user_lname'));
+        $select->joinleft(array('c'=>'tranzgo_customers'), 'tr.customer_id = c.customer_id', array('customer_name'));
 
+        if ($date_from && date_to) {
+            $select->where("a.date_time >= '$date_from'");
+            $select->where("a.date_time <= '$date_to'");
+        }
 
+        // if ($status) {
+        //     $select->where("a.driver_status_id = '$status'");
+        // }
 
+        $select->order('a.'.$arr_order['col'].' '.$arr_order['typ']);
+        if ($arr_limit['limit']) {
+            $select->limitPage($arr_limit['page'], $arr_limit['limit']);
+        }
+
+        return $this->DB->fetchAssoc($select);
+    }
+
+    public function request_driver_status_change_log_count($date_from, $date_to, $status)
+    {
+        $select = $this->DB->select();
+        $select->from(array('a'=>'tranzgo_driver_status_change_log'), array('num'=>'count(a.log_id)'));
+        $select->joinleft(array('tr'=>'tranzgo_request'), 'a.request_id = tr.request_id', array());
+        $select->joinleft(array('tds'=>'tranzgo_driver_status'), 'tds.driver_status_id = a.driver_status_id', array());
+        $select->joinleft(array('u'=>'tranzgo_user'), 'u.user_id = a.driver_id', array());
+
+        if ($date_from && date_to) {
+            $select->where("a.date_time >= '$date_from'");
+            $select->where("a.date_time <= '$date_to'");
+        }
+
+        // if ($status) {
+        //     $select->where("a.driver_status_id = '$status'");
+        // }
+
+        $ret = $this->DB->fetchrow($select);
+
+        return $ret['num'];
+    }
 
     public function check_exist_drivers($rent_from, $rent_to, $company_id, $rental_id)
     {
@@ -1162,6 +1206,7 @@ class Request extends Zend_Db_Table
         if ($company_id) {
             $select->where('tu.company_id=?', $company_id);
         }
+
         $select->order('tu.'.$arr_order['col'].' '.$arr_order['typ']);
         if ($arr_limit['limit']) {
             $select->limitPage($arr_limit['page'], $arr_limit['limit']);

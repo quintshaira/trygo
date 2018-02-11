@@ -52,6 +52,7 @@ class DownloadController extends Zend_Controller_Action
         Zend_Loader::loadClass('Downloadexcel');
         Zend_Loader::loadClass('Dashbord');
         Zend_Loader::loadClass('Customer');
+        Zend_Loader::loadClass('Request');
         $ob_Downloadexcel = new Downloadexcel();
 
         $export_id = trim($this->_request->getParam('export_id', ""));
@@ -109,7 +110,24 @@ class DownloadController extends Zend_Controller_Action
             $arr_order['typ'] ='DESC';
 
             $rows = $ob_Customer->get_customer_list_rows($company_id, '', $arr_limit, $arr_order);
+        } elseif ($export_id==6) {
+            $ob_Request = new Request();
+
+            $rent_from = $this->_request->getParam('rent_from', '') ? trim($this->_request->getParam('rent_from', '')):0;
+            $rent_to = $this->_request->getParam('rent_to', '') ? trim($this->_request->getParam('rent_to', '')): 0;
+            $status = 1;
+
+            $arr_limit = array();
+            $arr_limit['limit'] = 0;
+            $arr_limit['page'] = 0;
+
+            $arr_order = array();
+            $arr_order['col'] ='log_id';
+            $arr_order['typ'] ='DESC';
+
+            $rows = $ob_Request->request_driver_status_change_log($rent_from, $rent_to, $status, $arr_limit, $arr_order);
         }
+
 
         $objPHPExcel = new PHPExcel();
 
