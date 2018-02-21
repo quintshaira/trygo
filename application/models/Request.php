@@ -730,7 +730,7 @@ class Request extends Zend_Db_Table
         $select->where("'$rent_from' NOT BETWEEN tr.rent_from AND tr.rent_to");
         $select->where("'$rent_to' NOT BETWEEN tr.rent_from AND tr.rent_to");
         $select->where("'$rent_from' < tr.rent_from AND '$rent_to'< tr.rent_from OR '$rent_from' > tr.rent_to AND '$rent_to' > tr.rent_to");
-        $select->where("tr.is_delete=?", 0);
+        //$select->where("tr.is_delete=?", 0);
 
 
         $result = $this->DB->fetchAll($select);
